@@ -1,0 +1,428 @@
+﻿/* ========================================
+   EMPLOYEE LAYOUT - CSS (COMPLETELY FIXED)
+   Sign Out & Dark Mode Always Visible
+   ======================================== */
+
+/* ========================================
+   NAVBAR FIX - ENSURE BUTTONS ALWAYS VISIBLE
+   ======================================== */
+
+/* Fix navbar collapse - prevent hiding on desktop */
+#navbarBlur .collapse.navbar-collapse {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    flex-grow: 1 !important;
+}
+
+/* Fix navbar nav alignment */
+#navbarBlur .navbar-nav {
+    flex-direction: row !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    margin-left: auto !important;
+    gap: 12px !important;
+}
+
+/* Fix nav items */
+#navbarBlur .nav-item {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+    /* Fix nav item flex */
+    #navbarBlur .nav-item.d-flex {
+        display: flex !important;
+        align-items: center !important;
+    }
+
+/* ========================================
+   DARK MODE TOGGLE BUTTON
+   ======================================== */
+
+.dark-mode-toggle {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    font-size: 18px !important;
+    padding: 0 !important;
+    margin: 0 8px 0 0 !important;
+    position: relative !important;
+    z-index: 100 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+    .dark-mode-toggle:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+        transform: rotate(180deg) !important;
+        color: white !important;
+    }
+
+    .dark-mode-toggle:active {
+        transform: scale(0.95) !important;
+    }
+
+    .dark-mode-toggle:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3) !important;
+    }
+
+    /* Icon inside dark mode toggle */
+    .dark-mode-toggle i {
+        display: inline-block !important;
+        color: #ffffff !important;
+        font-size: 18px !important;
+        line-height: 1 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+/* Dark mode active state for toggle */
+body.dark-mode .dark-mode-toggle {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+    body.dark-mode .dark-mode-toggle i {
+        color: #fbbf24 !important;
+    }
+
+/* ========================================
+   SIGN OUT BUTTON - ALWAYS VISIBLE
+   ======================================== */
+
+/* Main Sign Out Button Style */
+.btn-sign-out {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3) !important;
+    white-space: nowrap !important;
+    position: relative !important;
+    z-index: 100 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    line-height: 1.5 !important;
+}
+
+    .btn-sign-out:hover {
+        background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4) !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+    }
+
+    .btn-sign-out:active {
+        transform: translateY(0) !important;
+        box-shadow: 0 2px 10px rgba(245, 87, 108, 0.3) !important;
+    }
+
+    .btn-sign-out:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.3) !important;
+    }
+
+    /* Icon inside Sign Out button */
+    .btn-sign-out i {
+        font-size: 14px !important;
+        margin: 0 !important;
+        display: inline-block !important;
+    }
+
+    /* Text inside Sign Out button */
+    .btn-sign-out span {
+        display: inline-block !important;
+        font-weight: 600 !important;
+    }
+
+/* Override any Bootstrap button styles that might conflict */
+a.btn-sign-out,
+a.btn-sign-out:hover,
+a.btn-sign-out:focus,
+a.btn-sign-out:active {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+/* ========================================
+   NAVBAR CONTAINER FIX
+   ======================================== */
+
+/* Ensure navbar content is properly aligned */
+#navbarBlur .container-fluid {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+}
+
+/* Breadcrumb area */
+#navbarBlur nav[aria-label="breadcrumb"] {
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+}
+
+/* Right side buttons container */
+#navbarBlur #Logout {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* ========================================
+   DARK MODE STYLES - COMPLETE COVERAGE
+   ======================================== */
+
+body.dark-mode {
+    background-color: #0f172a !important;
+    color: #f1f5f9 !important;
+}
+
+    body.dark-mode .main-content {
+        background-color: #0f172a !important;
+    }
+
+    /* Sidebar Dark Mode */
+    body.dark-mode .sidenav {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+    }
+
+        body.dark-mode .sidenav .nav-link {
+            color: #cbd5e1 !important;
+        }
+
+            body.dark-mode .sidenav .nav-link:hover,
+            body.dark-mode .sidenav .nav-link.active {
+                background-color: #334155 !important;
+                color: #f1f5f9 !important;
+            }
+
+        body.dark-mode .sidenav .icon {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-mode .sidenav hr.horizontal.dark {
+            background-image: linear-gradient(90deg, #334155, transparent) !important;
+        }
+
+    /* Navbar Dark Mode */
+    body.dark-mode .navbar-main,
+    body.dark-mode .min-height-300.bg-primary {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    }
+
+    body.dark-mode .navbar {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    }
+
+    /* Cards Dark Mode */
+    body.dark-mode .card,
+    body.dark-mode .stat-card,
+    body.dark-mode .chart-card {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+        color: #f1f5f9 !important;
+    }
+
+    body.dark-mode .stat-label,
+    body.dark-mode .chart-title {
+        color: #cbd5e1 !important;
+    }
+
+    body.dark-mode .stat-value {
+        color: #f1f5f9 !important;
+    }
+
+    body.dark-mode .stat-change {
+        color: #94a3b8 !important;
+    }
+
+    /* Footer Dark Mode */
+    body.dark-mode .footer {
+        background-color: #1e293b !important;
+        color: #94a3b8 !important;
+    }
+
+        body.dark-mode .footer .copyright {
+            color: #94a3b8 !important;
+        }
+
+    /* Hero Section Dark Mode */
+    body.dark-mode .hero-section,
+    body.dark-mode .bg-gradient-primary,
+    body.dark-mode [class*="bg-gradient-"] {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    }
+
+    body.dark-mode h1,
+    body.dark-mode h2,
+    body.dark-mode h3,
+    body.dark-mode h4,
+    body.dark-mode h5,
+    body.dark-mode h6 {
+        color: #f1f5f9 !important;
+    }
+
+    body.dark-mode .text-white {
+        color: #f1f5f9 !important;
+    }
+
+    /* Icons and buttons Dark Mode */
+    body.dark-mode .icon-box {
+        background-color: #334155 !important;
+    }
+
+    body.dark-mode .btn-danger {
+        background-color: #dc2626 !important;
+        border-color: #dc2626 !important;
+    }
+
+    /* Charts Dark Mode */
+    body.dark-mode .apexcharts-canvas text,
+    body.dark-mode .apexcharts-canvas tspan {
+        fill: #cbd5e1 !important;
+    }
+
+    /* Tables Dark Mode */
+    body.dark-mode table {
+        color: #f1f5f9 !important;
+    }
+
+    body.dark-mode thead {
+        background-color: #334155 !important;
+    }
+
+    body.dark-mode tbody tr {
+        border-color: #334155 !important;
+    }
+
+    /* Inputs Dark Mode */
+    body.dark-mode input,
+    body.dark-mode select,
+    body.dark-mode textarea {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+        color: #f1f5f9 !important;
+    }
+
+    /* Sign Out Button Dark Mode */
+    body.dark-mode .btn-sign-out {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4) !important;
+    }
+
+        body.dark-mode .btn-sign-out:hover {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.5) !important;
+        }
+
+    /* Dark Mode Toggle Dark Mode */
+    body.dark-mode .dark-mode-toggle {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablet */
+@media (max-width: 992px) {
+    .dark-mode-toggle {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+        font-size: 16px !important;
+    }
+
+    .btn-sign-out {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+    }
+
+        .btn-sign-out span {
+            display: none !important;
+        }
+
+        .btn-sign-out i {
+            font-size: 16px !important;
+            margin: 0 !important;
+        }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    #navbarBlur .container-fluid {
+        flex-wrap: wrap !important;
+    }
+
+    #navbarBlur .navbar-nav {
+        width: 100% !important;
+        justify-content: flex-end !important;
+        margin-top: 10px !important;
+    }
+
+    .dark-mode-toggle {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        min-height: 34px !important;
+    }
+
+    .btn-sign-out {
+        padding: 8px 14px !important;
+        font-size: 12px !important;
+    }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+/* Hide breadcrumb */
+.breadcrumb {
+    display: none !important;
+}
+
+/* Fix Argon Dashboard specific elements */
+body.dark-mode .bg-gradient-dark {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+}
+
+body.dark-mode .card-stats .card-body {
+    background-color: #1e293b !important;
+}
+
+body.dark-mode .progress {
+    background-color: #334155 !important;
+}

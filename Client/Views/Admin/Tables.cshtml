@@ -1,0 +1,343 @@
+﻿@{
+    ViewData["Title"] = "Tables";
+    Layout = "_AdminLayout";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="~/css/admin-tables.css" />
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Tables</h1>
+                <p class="hero-subtitle">Manage all employees, projects, and reports in one place.</p>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-badge">
+                    <div class="stat-value" id="totalEmployees">0</div>
+                    <div class="stat-label">
+                        <i class="fas fa-users"></i> Total Employees
+                    </div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-value" id="totalProjects">0</div>
+                    <div class="stat-label">
+                        <i class="fas fa-folder"></i> Total Projects
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+        <button class="tab-btn active" data-tab="employees"><i class="fas fa-users"></i> Employees</button>
+        <button class="tab-btn" data-tab="projects"><i class="fas fa-folder"></i> Projects</button>
+        <button class="tab-btn" data-tab="reports"><i class="fas fa-file-alt"></i> Reports</button>
+    </div>
+
+    <!-- EMPLOYEES TAB -->
+    <div class="tab-content active" id="employeesTab">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title"><i class="fas fa-users"></i> All Employees</h3>
+                <div class="table-actions">
+                    <button class="btn-create" id="createEmployeeBtn"><i class="fas fa-user-plus"></i> Create Employee</button>
+                    <button class="btn-export"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn-export"><i class="fas fa-file-pdf"></i> PDF</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>No</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="employeesTableBody">
+                        <tr><td colspan="5"><div class="loading-state"><div class="spinner-custom"></div><p>Loading employees...</p></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROJECTS TAB -->
+    <div class="tab-content" id="projectsTab">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title"><i class="fas fa-folder"></i> All Projects</h3>
+                <div class="table-actions">
+                    <button class="btn-export"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn-export"><i class="fas fa-file-pdf"></i> PDF</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>No</th><th>Title</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Manager</th><th>Actions</th></tr></thead>
+                    <tbody id="projectsTableBody">
+                        <tr><td colspan="7"><div class="loading-state"><div class="spinner-custom"></div><p>Loading projects...</p></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTS TAB -->
+    <div class="tab-content" id="reportsTab">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title"><i class="fas fa-file-alt"></i> All Reports</h3>
+                <div class="table-actions">
+                    <button class="btn-create" id="createReportBtn"><i class="fas fa-plus"></i> Create Report</button>
+                    <button class="btn-export"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn-export"><i class="fas fa-file-pdf"></i> PDF</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>No</th><th>Title</th><th>Date</th><th>Status</th><th>Done By</th><th>Actions</th></tr></thead>
+                    <tbody id="reportsTableBody">
+                        <tr><td colspan="6"><div class="loading-state"><div class="spinner-custom"></div><p>Loading reports...</p></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================
+     CREATE EMPLOYEE MODAL
+     ======================================== -->
+<div class="modal fade" id="createEmployeeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i> Create New Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createEmployeeForm">
+                    <div class="mb-3"><label class="form-label">Email <span class="text-danger">*</span></label><input type="email" class="form-control" id="createEmail" required placeholder="employee@modar.com"></div>
+                    <div class="mb-3"><label class="form-label">Password <span class="text-danger">*</span></label><input type="password" class="form-control" id="createPassword" required placeholder="Minimum 6 characters"></div>
+                    <div class="mb-3"><label class="form-label">Phone <span class="text-danger">*</span></label><input type="text" class="form-control" id="createPhone" required placeholder="081234567890"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Role <span class="text-danger">*</span></label>
+                        <select class="form-select" id="createRole" required>
+                            <option value="">Select Role</option>
+                            <option value="Employee">Employee</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-3"><label class="form-label">First Name</label><input type="text" class="form-control" id="createFirstName" placeholder="First name"></div>
+                    <div class="mb-3"><label class="form-label">Last Name</label><input type="text" class="form-control" id="createLastName" placeholder="Last name"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitCreateEmployee()"><i class="fas fa-save me-2"></i>Create Employee</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================
+     EDIT EMPLOYEE MODAL
+     ======================================== -->
+<div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i> Edit Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editEmployeeForm">
+                    <input type="hidden" id="editEmployeeId">
+                    <div class="mb-3"><label class="form-label">Email <span class="text-danger">*</span></label><input type="email" class="form-control" id="editEmail" required></div>
+                    <div class="mb-3"><label class="form-label">Phone <span class="text-danger">*</span></label><input type="text" class="form-control" id="editPhone" required placeholder="081234567890"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Role <span class="text-danger">*</span></label>
+                        <select class="form-select" id="editRole" required>
+                            <option value="Employee">Employee</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-3"><label class="form-label">First Name</label><input type="text" class="form-control" id="editFirstName"></div>
+                    <div class="mb-3"><label class="form-label">Last Name</label><input type="text" class="form-control" id="editLastName"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Status <span class="text-danger">*</span></label>
+                        <select class="form-select" id="editStatus" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitEditEmployee()"><i class="fas fa-save me-2"></i>Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================
+     CREATE REPORT MODAL (FIXED: DROPDOWN PROGRESS)
+     ======================================== -->
+<div class="modal fade" id="createReportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i> Create New Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createReportForm">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Report Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createReportTitle" required minlength="3" maxlength="100" placeholder="Enter report title">
+                            <small class="form-text text-muted">3-100 characters</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="createReportDescription" rows="3" required minlength="10" maxlength="1000" placeholder="Enter report description"></textarea>
+                            <small class="form-text text-muted">10-1000 characters</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="createReportDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Progress Report <span class="text-danger">*</span></label>
+                            <select class="form-select" id="createReportProgressReport" required>
+                                <option value="">Select Progress</option>
+                                <option value="0">0% - Not Started</option>
+                                <option value="10">10% - Initial Phase</option>
+                                <option value="15">15% - Early Progress</option>
+                                <option value="25">25% - Quarter Complete</option>
+                                <option value="40">40% - Approaching Half</option>
+                                <option value="45">45% - Nearly Half</option>
+                                <option value="50">50% - Half Complete</option>
+                                <option value="60">60% - More Than Half</option>
+                                <option value="75">75% - Three Quarter Complete</option>
+                                <option value="90">90% - Almost Complete</option>
+                                <option value="100">100% - Completed</option>
+                            </select>
+                            <small class="form-text text-muted">Select progress percentage</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Project <span class="text-danger">*</span></label>
+                            <select class="form-select" id="createReportProjectId" required>
+                                <option value="">Select Project</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select" id="createReportStatus" required>
+                                <option value="0">Pending</option>
+                                <option value="1">On Progress</option>
+                                <option value="2">Done</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitCreateReport()"><i class="fas fa-save me-2"></i>Create Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================
+     EDIT REPORT MODAL (FIXED: DROPDOWN PROGRESS)
+     ======================================== -->
+<div class="modal fade" id="editReportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit me-2"></i> Edit Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editReportForm">
+                    <input type="hidden" id="editReportId">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Report Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editReportTitle" required minlength="3" maxlength="100">
+                            <small class="form-text text-muted">3-100 characters</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="editReportDescription" rows="3" required minlength="10" maxlength="1000"></textarea>
+                            <small class="form-text text-muted">10-1000 characters</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="editReportDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Progress Report <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editReportProgressReport" required>
+                                <option value="">Select Progress</option>
+                                <option value="0">0% - Not Started</option>
+                                <option value="10">10% - Initial Phase</option>
+                                <option value="15">15% - Early Progress</option>
+                                <option value="25">25% - Quarter Complete</option>
+                                <option value="40">40% - Approaching Half</option>
+                                <option value="45">45% - Nearly Half</option>
+                                <option value="50">50% - Half Complete</option>
+                                <option value="60">60% - More Than Half</option>
+                                <option value="75">75% - Three Quarter Complete</option>
+                                <option value="90">90% - Almost Complete</option>
+                                <option value="100">100% - Completed</option>
+                            </select>
+                            <small class="form-text text-muted">Select progress percentage</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Project <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editReportProjectId" required>
+                                <option value="">Select Project</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editReportStatus" required>
+                                <option value="0">Pending</option>
+                                <option value="1">On Progress</option>
+                                <option value="2">Done</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitEditReport()"><i class="fas fa-save me-2"></i>Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-tables.js"></script>
+}

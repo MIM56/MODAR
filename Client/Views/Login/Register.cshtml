@@ -1,0 +1,237 @@
+﻿@{
+    ViewData["Title"] = "Register";
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <title>Register Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome untuk Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Custom CSS (File yang dipisahkan) -->
+    <link rel="stylesheet" type="text/css" href="/loginAssets/register.css">
+</head>
+<body>
+    <!-- Back to Home Button (Pojok Kanan Atas) -->
+    <div class="back-home-btn">
+        <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-danger">
+            <i class="fas fa-home mr-2"></i>Back to Home
+        </a>
+    </div>
+
+    <div class="register-container">
+        <div class="register-box">
+            <!-- Left Side: Info & Sign In Link -->
+            <div class="register-left">
+                <img src="/loginAssets/imgs/logo_white.png" alt="Register Logo" />
+                <h3>Already have an account?</h3>
+                <p>Let's go sign in by clicking the sign in button!</p>
+                <a asp-area="" asp-controller="Login" asp-action="Index" class="btn-signin">
+                 Sign In
+               </a>
+            </div>
+
+            <!-- Right Side: Registration Form -->
+            <div class="register-right">
+                <h3 class="register-heading">Create Account</h3>
+                <form role="form" method="POST" class="needs-validation" id="formRegister" asp-controller="Login" asp-action="Register" novalidate>
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Full Name *" name="fullName" id="fullName" value="" required />
+                                <div class="invalid-feedback">Please provide your full name.</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="Your Email *" name="email" id="email" value="" required />
+                                <div class="invalid-feedback">Please provide a valid email.</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <input type="tel" minlength="10" maxlength="13" class="form-control" placeholder="Phone Number *" name="phone" id="phone" value="" required pattern="[0-9]+" />
+                                <div class="invalid-feedback">Please provide a valid phone number (10-13 digits).</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Password *" id="password" name="password" value="" required minlength="6" />
+                                <div class="invalid-feedback">Password must be at least 6 characters.</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <input type="date" class="form-control" placeholder="Birth Date *" name="birthDate" id="birthDate" value="" required />
+                                <div class="invalid-feedback">Please select your birth date.</div>
+                            </div>
+                            
+                            <!-- Gender Horizontal Layout -->
+                            <div class="form-group">
+                                <label class="form-label">Gender:</label>
+                                <div class="d-flex align-items-center">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="gender" value="0" id="male_radio" checked>
+                                        <label class="form-check-label" for="male_radio">Male</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="gender" value="1" id="female_radio">
+                                        <label class="form-check-label" for="female_radio">Female</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btnRegister" id="btn_register">
+                                <i class="fas fa-user-plus mr-2"></i>Register
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.6/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var form = document.getElementById('formRegister');
+
+            // Setup jQuery Validation
+            $('#formRegister').validate({
+                rules: {
+                    fullName: { required: true, minlength: 3 },
+                    email: { required: true, email: true },
+                    phone: { required: true, number: true, minlength: 10, maxlength: 13 },
+                    password: { required: true, minlength: 6 },
+                    birthDate: { required: true }
+                },
+                messages: {
+                    fullName: { required: "Full name is required", minlength: "Min. 3 characters" },
+                    email: { required: "Email is required", email: "Enter a valid email" },
+                    phone: { required: "Phone is required", number: "Numbers only", minlength: "Min. 10 digits", maxlength: "Max. 13 digits" },
+                    password: { required: "Password is required", minlength: "Min. 6 characters" },
+                    birthDate: { required: "Birth date is required" }
+                },
+                errorElement: 'div',
+                errorClass: 'invalid-feedback d-block',
+                validClass: 'is-valid',
+                highlight: function(element) {
+                    $(element).addClass('is-invalid').removeClass('is-valid');
+                },
+                unhighlight: function(element) {
+                    $(element).addClass('is-valid').removeClass('is-invalid');
+                }
+            });
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (!$('#formRegister').valid()) {
+                    return;
+                }
+
+                var formData = {
+                    fullName: $('#fullName').val(),
+                    email: $('#email').val(),
+                    phone: $('#phone').val(),
+                    password: $('#password').val(),
+                    birthDate: $('#birthDate').val(),
+                    gender: parseInt($('input[name="gender"]:checked').val())
+                };
+
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
+                // Disable tombol untuk mencegah double submit
+                $('#btn_register').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Registering...');
+
+                $.ajax({
+                    url: '/Login/Register',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    headers: { 'RequestVerificationToken': token },
+                    success: function(response, textStatus, xhr) {
+                        if (response && (response.statusCode === 201 || response.statusCode === 200 || response.statusCode === 1)) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Register Success!',
+                                text: response.message || 'Account created successfully',
+                                confirmButtonText: 'OK',
+                                allowOutsideClick: false
+                            }).then(() => {
+                                window.location.href = '/Login';
+                            });
+                            return;
+                        }
+
+                        if (response && (response.statusCode === 0 || response.statusCode === 204 || response.statusCode === 400)) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Register Failed!',
+                                text: response.message || 'Email or phone already registered',
+                                confirmButtonText: 'OK'
+                            });
+                            resetButton();
+                            return;
+                        }
+
+                        if (xhr.status === 200 || xhr.status === 201) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Register Success!',
+                                text: 'Account created successfully',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = '/Login';
+                            });
+                        }
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        resetButton();
+
+                        if (xhr.status === 0) {
+                            Swal.fire({ icon: 'error', title: 'Connection Error!', text: 'Cannot connect to server. Please check your connection.', confirmButtonText: 'OK' });
+                        } else if (xhr.status === 400) {
+                            var errorMsg = 'Invalid data';
+                            if (xhr.responseJSON) {
+                                errorMsg = xhr.responseJSON.message || errorMsg;
+                                if (xhr.responseJSON.errors) {
+                                    errorMsg += '<br><ul style="text-align:left; margin-top:10px;">';
+                                    $.each(xhr.responseJSON.errors, function(i, err) {
+                                        errorMsg += '<li>' + err + '</li>';
+                                    });
+                                    errorMsg += '</ul>';
+                                }
+                            }
+                            Swal.fire({ icon: 'warning', title: 'Validation Error!', html: errorMsg, confirmButtonText: 'OK' });
+                        } else if (xhr.status === 500) {
+                            var errorMsg = xhr.responseJSON?.message || 'Internal server error';
+                            Swal.fire({ icon: 'error', title: 'Server Error!', html: errorMsg, confirmButtonText: 'OK' });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Register Failed!', text: xhr.responseJSON?.message || 'An error occurred while registering', confirmButtonText: 'OK' });
+                        }
+                    },
+                    complete: function() {
+                        resetButton();
+                    }
+                });
+            }, false);
+
+            function resetButton() {
+                $('#btn_register').prop('disabled', false).html('<i class="fas fa-user-plus mr-2"></i>Register');
+            }
+        });
+    </script>
+</body>
+</html>

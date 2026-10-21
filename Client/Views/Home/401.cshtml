@@ -1,0 +1,57 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>401 - Unauthorized</title>
+    
+    <!-- Font Montserrat dengan weight lengkap -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Link ke file CSS error terpusat -->
+    <link type="text/css" rel="stylesheet" href="~/css/error.css" />
+</head>
+
+<body>
+
+    <div id="notfound">
+        <div class="notfound-container">
+            <div class="notfound-code">
+                <!-- Class 'error-401' akan memberi warna oranye/kuning spesifik untuk Unauthorized -->
+                <h1 class="error-401">401</h1>
+            </div>
+            <h2>Unauthorized Access</h2>
+            <p>Access is allowed only for registered users. Please log in to continue.</p>
+            
+            <!-- Tombol dengan link aktif dan hitungan mundur -->
+            <a href="/login" class="btn-home" id="redirect-link">
+                Go to Login Page <span id="countdown">5</span>s
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let timer = 5;
+        const countdownElement = document.getElementById('countdown');
+        const redirectLink = document.getElementById('redirect-link');
+
+        const interval = setInterval(() => {
+            timer--;
+            // Gunakan textContent untuk performa dan keamanan yang lebih baik
+            countdownElement.textContent = timer;
+
+            if (timer <= 0) {
+                clearInterval(interval); // Hentikan interval agar tidak berjalan di background
+                redirectLink.innerHTML = "Redirecting...";
+                redirectLink.style.pointerEvents = "none"; // Nonaktifkan klik saat sedang redirect
+                window.location.href = "/login";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

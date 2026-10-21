@@ -1,0 +1,134 @@
+﻿/* client/wwwroot/css/error.css */
+
+/* =========================================
+   1. GLOBAL RESET & BASE STYLES
+   ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f8f9fe;
+    color: #32325d;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.notfound-container {
+    max-width: 600px;
+    width: 100%;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Animasi masuk yang halus */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   2. TYPOGRAPHY & ERROR CODES
+   ========================================= */
+.notfound-code h1 {
+    font-size: 120px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+/* Warna spesifik untuk setiap jenis error (UX yang lebih baik) */
+.error-401 {
+    color: #fb6340; /* Orange: Peringatan / Butuh Autentikasi */
+    text-shadow: 4px 4px 0px rgba(251, 99, 64, 0.15);
+}
+
+.error-403 {
+    color: #f5365c; /* Merah/Pink: Akses Ditolak / Forbidden */
+    text-shadow: 4px 4px 0px rgba(245, 54, 92, 0.15);
+}
+
+.error-404 {
+    color: #5e72e4; /* Biru: Tidak Ditemukan / Netral */
+    text-shadow: 4px 4px 0px rgba(94, 114, 228, 0.15);
+}
+
+.notfound-container h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #32325d;
+}
+
+.notfound-container p {
+    font-size: 16px;
+    font-weight: 300;
+    color: #8898aa;
+    margin-bottom: 35px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   3. BUTTON STYLES
+   ========================================= */
+.btn-home {
+    display: inline-block;
+    background-color: #5e72e4;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px 35px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(94, 114, 228, 0.3);
+}
+
+    .btn-home:hover {
+        background-color: #4a5fc1;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(94, 114, 228, 0.4);
+    }
+
+    .btn-home:active {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(94, 114, 228, 0.3);
+    }
+
+/* =========================================
+   4. RESPONSIVE DESIGN (Mobile Optimization)
+   ========================================= */
+@media screen and (max-width: 480px) {
+    .notfound-code h1 {
+        font-size: 80px; /* Perkecil angka error di HP */
+    }
+
+    .notfound-container h2 {
+        font-size: 22px;
+    }
+
+    .notfound-container p {
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .btn-home {
+        padding: 14px 20px;
+        font-size: 14px;
+        width: 100%; /* Tombol lebar penuh di layar kecil agar mudah ditekan */
+        border-radius: 8px;
+    }
+}

@@ -1,0 +1,54 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Halaman Tidak Ditemukan</title>
+
+    <!-- Menggunakan font Montserrat dengan variasi weight yang lebih lengkap -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&display=swap" rel="stylesheet">
+
+    <!-- Link ke file CSS eksternal (pastikan path-nya sesuai dengan struktur folder Anda) -->
+    <link type="text/css" rel="stylesheet" href="~/css/error.css" />
+</head>
+
+<body>
+
+    <div id="notfound">
+        <div class="notfound-container">
+            <div class="notfound-404">
+                <h1>404</h1>
+            </div>
+            <h2>Oops! Halaman Tidak Ditemukan</h2>
+            <p>Sepertinya Anda tersesat. Halaman yang Anda cari tidak ada, telah dipindahkan, atau sedang dalam perbaikan.</p>
+
+            <!-- Tombol yang lebih informatif dengan span khusus untuk angka hitungan mundur -->
+            <a href="/" class="btn-home" id="home-link">
+                Kembali ke Beranda <span id="countdown">5</span> detik
+            </a>
+        </div>
+    </div>
+
+    <script>
+            let timer = 5;
+            const countdownElement = document.getElementById('countdown');
+            const homeLink = document.getElementById('home-link');
+
+            const interval = setInterval(() => {
+                timer--;
+                countdownElement.textContent = timer;
+
+                if (timer <= 0) {
+                    clearInterval(interval); // Hentikan interval agar lebih optimal
+                    homeLink.innerHTML = "Mengalihkan...";
+                    window.location.href = "/";
+                }
+            }, 1000);
+    </script>
+</body>
+</html>

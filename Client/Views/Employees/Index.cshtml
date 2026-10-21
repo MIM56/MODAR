@@ -1,0 +1,181 @@
+﻿@{
+    ViewData["Title"] = "Employee Dashboard";
+    Layout = "_EmployeesLayout";
+}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="~/css/employee-dashboard.css" />
+
+<!-- TOP NAVBAR -->
+<nav class="top-navbar">
+    <div class="navbar-brand">
+        <i class="fas fa-rocket brand-icon"></i>
+        <span class="brand-text">MODAR</span>
+    </div>
+    <button class="btn-sign-out" onclick="signOut()">
+        <i class="fas fa-sign-out-alt"></i> Sign Out
+    </button>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="dashboard-container">
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Dashboard</h1>
+                <p class="hero-subtitle">Welcome back! Manage your projects and track your daily progress.</p>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalProjects">0</div>
+                    <div class="stat-label">
+                        <i class="fas fa-folder"></i> Total Projects
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalReports">0</div>
+                    <div class="stat-label">
+                        <i class="fas fa-file-alt"></i> Total Reports
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS CARDS -->
+    <div class="stats-grid">
+        <div class="info-card">
+            <div class="info-content">
+                <div class="info-label">NUMBER OF PROJECTS</div>
+                <div class="info-value" id="numProjects">0</div>
+                <div class="info-trend positive">
+                    <i class="fas fa-arrow-up"></i> <span id="projectTrend">0%</span> this month
+                </div>
+            </div>
+            <div class="info-icon blue">
+                <i class="fas fa-folder"></i>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-content">
+                <div class="info-label">NUMBER OF REPORTS</div>
+                <div class="info-value" id="numReports">0</div>
+                <div class="info-trend positive">
+                    <i class="fas fa-arrow-up"></i> <span id="reportTrend">0%</span> this month
+                </div>
+            </div>
+            <div class="info-icon red">
+                <i class="fas fa-file-alt"></i>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-content">
+                <div class="info-label">COMPLETED PROJECTS</div>
+                <div class="info-value" id="completedProjects">0</div>
+                <div class="info-trend positive">
+                    <i class="fas fa-check"></i> <span id="successRate">0%</span> success rate
+                </div>
+            </div>
+            <div class="info-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-content">
+                <div class="info-label">PENDING REPORTS</div>
+                <div class="info-value" id="pendingReports">0</div>
+                <div class="info-trend negative">
+                    <i class="fas fa-exclamation-circle"></i> Need attention
+                </div>
+            </div>
+            <div class="info-icon orange">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS SECTION -->
+    <div class="charts-grid">
+        <!-- Report Status Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-pie"></i> Report Status
+                </h3>
+            </div>
+            <div class="chart-body">
+                <canvas id="reportStatusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Project Progress Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-bar"></i> Project Progress
+                </h3>
+            </div>
+            <div class="chart-body">
+                <canvas id="projectProgressChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Monthly Activity Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-line"></i> Monthly Activity
+                </h3>
+            </div>
+            <div class="chart-body">
+                <canvas id="monthlyActivityChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECENT ACTIVITY TABLE -->
+    <div class="table-section">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-list"></i> Recent Reports
+                </h3>
+                <button class="btn-view-all" onclick="viewAllReports()">View All</button>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Title</th>
+                            <th>Project</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentReportsTable">
+                        <tr>
+                            <td colspan="6" class="loading-cell">
+                                <div class="spinner"></div>
+                                <p>Loading...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+@section Scripts {
+    <script src="~/js/employee-dashboard.js"></script>
+}

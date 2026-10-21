@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Employees";
+    Layout = "_AdminLayout";
+}
+
+<link rel="stylesheet" href="~/css/admin-employees.css" />
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="hero-title">Employees</h1>
+                <p class="hero-subtitle">Manage all employees in the system.</p>
+            </div>
+            <div class="col-lg-4">
+                <div class="hero-stats-cards">
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-value" id="totalEmployees">0</div>
+                        <div class="mini-stat-label">
+                            <i class="fas fa-users"></i> Total Employees
+                        </div>
+                    </div>
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-value" id="totalManagers">0</div>
+                        <div class="mini-stat-label">
+                            <i class="fas fa-user-tie"></i> Managers
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+    <div class="table-card">
+        <div class="table-header">
+            <h3 class="table-title">
+                <i class="fas fa-users"></i>
+                All Employees
+            </h3>
+            <div class="table-actions">
+                <button class="btn-export" id="exportExcel">
+                    <i class="fas fa-file-excel"></i> Excel
+                </button>
+                <button class="btn-export" id="exportPDF">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employeesTableBody">
+                    <tr>
+                        <td colspan="5">
+                            <div class="loading-state">
+                                <div class="spinner-custom"></div>
+                                <p>Loading employees...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-employees.js"></script>
+}

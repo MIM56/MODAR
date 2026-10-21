@@ -1,0 +1,56 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Access Forbidden</title>
+    
+    <!-- Font Montserrat dengan weight lengkap -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Link ke file CSS error yang terpusat -->
+    <link type="text/css" rel="stylesheet" href="~/css/error.css" />
+</head>
+
+<body>
+
+    <div id="notfound">
+        <div class="notfound-container">
+            <div class="notfound-404">
+                <h1>403</h1>
+            </div>
+            <h2>Access Forbidden</h2>
+            <p>You do not have permission to access this page. You will be redirected to the dashboard shortly.</p>
+            
+            <!-- Tombol yang jelas, bisa diklik kapan saja, dengan span untuk hitungan mundur -->
+            <a href="/admin" class="btn-home" id="redirect-link">
+                Return to Dashboard <span id="countdown">5</span>s
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let timer = 5;
+        const countdownElement = document.getElementById('countdown');
+        const redirectLink = document.getElementById('redirect-link');
+
+        const interval = setInterval(() => {
+            timer--;
+            // Gunakan textContent daripada innerHTML untuk performa dan keamanan yang lebih baik
+            countdownElement.textContent = timer;
+
+            if (timer <= 0) {
+                clearInterval(interval); // Hentikan interval agar tidak berjalan di background
+                redirectLink.innerHTML = "Redirecting...";
+                redirectLink.style.pointerEvents = "none"; // Nonaktifkan klik saat sedang redirect
+                window.location.href = "/admin";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

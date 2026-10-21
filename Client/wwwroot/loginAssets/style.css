@@ -1,0 +1,410 @@
+﻿/* =========================================
+   Global Styles
+   ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+/* =========================================
+   Back to Home Button (FIXED & OPTIMIZED)
+   ========================================= */
+.back-home-container {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 99999;
+}
+
+.btn-back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+    .btn-back-home:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 71, 87, 0.4);
+        color: #ffffff;
+    }
+
+    .btn-back-home:active {
+        transform: translateY(-1px);
+    }
+
+/* =========================================
+   Main Container
+   ========================================= */
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    background-color: #ffffff;
+    min-height: 650px;
+    overflow: hidden;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   Left Side - Illustration
+   ========================================= */
+.left-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+    .left-panel::before {
+        content: '';
+        position: absolute;
+        width: 150%;
+        height: 150%;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        top: -50%;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .left-panel .content {
+        text-align: center;
+        color: white;
+        position: relative;
+        z-index: 1;
+        max-width: 380px;
+    }
+
+        .left-panel .content h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .left-panel .content p {
+            font-size: 15px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+    .left-panel .image {
+        width: 100%;
+        max-width: 320px;
+        margin-top: 20px;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+    }
+
+        .left-panel .image img {
+            width: 100%;
+            height: auto;
+        }
+
+    /* =========================================
+   ✅ CREATE ACCOUNT BUTTON - FIXED COLOR
+   ========================================= */
+    /* =========================================
+   ✅ CREATE ACCOUNT BUTTON - COMPLETELY FIXED
+   ========================================= */
+
+    /* Override SEMUA style untuk tombol di left panel */
+    .left-panel .btn,
+    .left-panel .btn.solid,
+    .left-panel button.btn,
+    .left-panel button.btn.solid {
+        background: #ffffff !important;
+        background-image: none !important;
+        color: #667eea !important;
+        border: 2px solid #ffffff !important;
+        width: auto !important;
+        min-width: 220px !important;
+        height: 50px !important;
+        border-radius: 25px !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        letter-spacing: 1px !important;
+        text-transform: uppercase !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        transition: all 0.3s ease !important;
+        margin-top: 10px !important;
+        margin-bottom: 20px !important;
+        padding: 0 30px !important;
+        cursor: pointer !important;
+    }
+
+        .left-panel .btn:hover,
+        .left-panel .btn.solid:hover,
+        .left-panel button.btn:hover,
+        .left-panel button.btn.solid:hover {
+            background: #f8f9fa !important;
+            background-image: none !important;
+            color: #5a67d8 !important;
+            border-color: #f8f9fa !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .left-panel .btn:active,
+        .left-panel .btn.solid:active,
+        .left-panel button.btn:active,
+        .left-panel button.btn.solid:active {
+            transform: translateY(-1px) !important;
+            background: #f0f0f0 !important;
+        }
+
+/* =========================================
+   Right Side - Form
+   ========================================= */
+.forms-container {
+    flex: 1;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #ffffff;
+}
+
+.signin-signup {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.sign-in-form {
+    width: 100%;
+}
+
+.title {
+    font-size: 30px;
+    color: #1e293b;
+    margin-bottom: 30px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+/* Input Field Modern */
+.input-field {
+    width: 100%;
+    background-color: #f1f5f9;
+    margin: 15px 0;
+    height: 55px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    position: relative;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+    .input-field:focus-within {
+        background-color: #ffffff;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .input-field i {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        margin-right: 15px;
+        transition: color 0.3s ease;
+    }
+
+    .input-field:focus-within i {
+        color: #667eea;
+    }
+
+    .input-field input {
+        background: none;
+        outline: none;
+        border: none;
+        font-weight: 500;
+        font-size: 1rem;
+        color: #1e293b;
+        width: 100%;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        .input-field input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+/* Tombol Submit Modern (SIGN IN) */
+.btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    outline: none;
+    height: 55px;
+    border-radius: 12px;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    .btn:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+/* =========================================
+   Responsive Design (Mobile & Tablet)
+   ========================================= */
+@media (max-width: 992px) {
+    .container {
+        max-width: 900px;
+        min-height: auto;
+    }
+
+    .left-panel .content h3 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+        align-items: flex-start;
+        padding-top: 80px;
+    }
+
+    .back-home-container {
+        top: 15px;
+        right: 15px;
+    }
+
+    .btn-back-home span {
+        display: none;
+    }
+
+    .btn-back-home {
+        padding: 12px;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        justify-content: center;
+    }
+
+    .container {
+        flex-direction: column;
+        min-height: auto;
+        border-radius: 20px;
+    }
+
+    .left-panel {
+        padding: 40px 30px;
+        border-radius: 20px 20px 0 0;
+    }
+
+        .left-panel .image {
+            max-width: 200px;
+            margin-top: 20px;
+        }
+
+    .forms-container {
+        padding: 40px 30px;
+        border-radius: 0 0 20px 20px;
+    }
+
+    .title {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+        padding-top: 70px;
+    }
+
+    .left-panel {
+        padding: 30px 20px;
+    }
+
+        .left-panel .content h3 {
+            font-size: 22px;
+        }
+
+        .left-panel .content p {
+            font-size: 14px;
+        }
+
+    .forms-container {
+        padding: 30px 20px;
+    }
+
+    .input-field {
+        height: 50px;
+    }
+
+    .btn {
+        height: 50px;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,436 @@
+﻿/* ========================================
+   MANAGER DASHBOARD - OPTIMIZED RESPONSIVE STYLES
+   ======================================== */
+
+/* ========================================
+   1. TABLET (768px - 1024px)
+   ======================================== */
+@media screen and (max-width: 1024px) {
+    /* Sidebar adjustment */
+    .sidebar {
+        width: 240px;
+    }
+
+    .main-content {
+        margin-left: 240px;
+        padding: 24px;
+    }
+
+    /* Grids adjustment */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr; /* Charts stack vertically on tablet for better readability */
+        gap: 20px;
+    }
+
+    /* Typography scaling */
+    .hero-title {
+        font-size: 40px;
+    }
+
+    .page-title {
+        font-size: 26px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    .mini-stat-value {
+        font-size: 28px;
+    }
+}
+
+/* ========================================
+   2. MOBILE PORTRAIT (481px - 768px)
+   ======================================== */
+@media screen and (max-width: 768px) {
+    /* Sidebar becomes off-canvas */
+    .sidebar {
+        width: 280px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1050;
+    }
+
+        .sidebar.active {
+            transform: translateX(0);
+            box-shadow: 5px 0 25px rgba(0,0,0,0.15);
+        }
+
+    /* Main content takes full width */
+    .main-content {
+        margin-left: 0;
+        padding: 16px;
+    }
+
+    /* Mobile Toggle Button */
+    .sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 1060;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        box-shadow: var(--shadow-md);
+        cursor: pointer;
+        font-size: 18px;
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+        .sidebar-toggle:active {
+            transform: scale(0.95);
+        }
+
+    /* Top Navbar adjustments */
+    .top-navbar {
+        padding: 16px 0;
+    }
+
+    .navbar-brand {
+        font-size: 20px;
+    }
+
+    .btn-signout {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+        .btn-signout span {
+            display: none; /* Show only icon on mobile */
+        }
+
+    /* Hero Section adjustments */
+    .hero-section {
+        padding: 80px 0 40px 0; /* Extra top padding for toggle button */
+    }
+
+    .hero-title {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+        font-size: 15px;
+        margin-bottom: 24px;
+    }
+
+    .hero-stats-cards {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .mini-stat-card {
+        flex: 1;
+        padding: 16px;
+    }
+
+    .mini-stat-value {
+        font-size: 24px;
+    }
+
+    .mini-stat-label {
+        font-size: 12px;
+    }
+
+    /* Stats Grid - Stack vertically */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .chart-card {
+        padding: 20px;
+    }
+
+    .chart-title {
+        font-size: 16px;
+    }
+
+    .chart-body {
+        min-height: 250px; /* Slightly taller for better mobile chart viewing */
+    }
+}
+
+/* ========================================
+   3. SMALL MOBILE (< 480px)
+   ======================================== */
+@media screen and (max-width: 480px) {
+    .main-content {
+        padding: 12px;
+    }
+
+    .sidebar-toggle {
+        top: 12px;
+        left: 12px;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .hero-section {
+        padding: 70px 0 30px 0;
+    }
+
+    .hero-title {
+        font-size: 26px;
+    }
+
+    .hero-subtitle {
+        font-size: 14px;
+    }
+
+    .hero-stats-cards {
+        flex-direction: column; /* Stack stats cards on very small screens */
+        gap: 10px;
+    }
+
+    .mini-stat-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+    }
+
+    .mini-stat-value {
+        font-size: 22px;
+        margin-bottom: 0;
+    }
+
+    .mini-stat-label {
+        font-size: 12px;
+        margin-bottom: 0;
+    }
+
+    .stats-grid {
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        letter-spacing: 0.03em;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .stat-change {
+        font-size: 12px;
+    }
+
+    .chart-card {
+        padding: 16px;
+    }
+
+    .chart-title {
+        font-size: 15px;
+    }
+
+    .chart-body {
+        min-height: 220px;
+    }
+}
+
+/* ========================================
+   4. LANDSCAPE MOBILE (Height < 500px)
+   ======================================== */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .sidebar-menu {
+        padding: 10px;
+    }
+
+        .sidebar-menu a {
+            padding: 10px 12px;
+            font-size: 13px;
+            gap: 10px;
+        }
+
+    .main-content {
+        margin-left: 220px;
+        padding: 12px;
+    }
+
+    .hero-section {
+        padding: 60px 0 20px 0;
+    }
+
+    .hero-title {
+        font-size: 28px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+/* ========================================
+   5. PRINT STYLES
+   ======================================== */
+@media print {
+    .sidebar,
+    .sidebar-toggle,
+    .top-navbar,
+    .btn-signout {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .hero-section {
+        background: white !important;
+        color: black !important;
+        padding: 20px 0;
+        margin-bottom: 20px;
+    }
+
+    .hero-title, .hero-subtitle, .mini-stat-value, .mini-stat-label {
+        color: black !important;
+    }
+
+    .chart-card,
+    .stat-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+        margin-bottom: 15px;
+    }
+}
+
+/* ========================================
+   6. DARK MODE SUPPORT (Optional but recommended)
+   ======================================== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --bg-main: #0f172a;
+        --bg-card: #1e293b;
+        --bg-sidebar: #1e293b;
+        --border: #334155;
+    }
+
+    body {
+        background: var(--bg-main);
+    }
+
+    .sidebar {
+        background: var(--bg-sidebar);
+        border-right-color: var(--border);
+    }
+
+    .top-navbar {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    }
+
+    .chart-card,
+    .stat-card,
+    .mini-stat-card {
+        background: var(--bg-card);
+        border-color: var(--border);
+    }
+
+    .sidebar-toggle {
+        background: var(--bg-card);
+        border-color: var(--border);
+        color: var(--text-primary);
+    }
+}
+
+/* ========================================
+   7. HIGH DPI / RETINA DISPLAYS
+   ======================================== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .stat-icon,
+    .user-avatar,
+    .mini-stat-card {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* ========================================
+   8. TOUCH DEVICES OPTIMIZATION
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+    /* Disable hover transforms on touch devices to prevent sticky hover states */
+    .stat-card:hover,
+    .chart-card:hover,
+    .btn-signout:hover {
+        transform: none;
+    }
+
+    /* Use active state for touch feedback */
+    .stat-card:active,
+    .chart-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+
+    .sidebar-menu a:active {
+        background: rgba(37, 99, 235, 0.1);
+    }
+}

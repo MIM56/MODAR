@@ -1,0 +1,352 @@
+﻿/* ============================================
+   REPORTS PAGE - RESPONSIVE STYLES
+   ============================================ */
+
+/* General Styles */
+#reports {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+    /* Header Section */
+    #reports h6.text-primary {
+        font-size: 0.875rem;
+        letter-spacing: 1px;
+    }
+
+    #reports h1.display-5 {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+    #reports h1.display-5 {
+        font-size: 1.75rem;
+    }
+
+    #reports h6.text-primary {
+        font-size: 0.75rem;
+    }
+
+    #reports p.text-muted {
+        font-size: 0.875rem;
+    }
+}
+
+/* Button Styles */
+.btn-primary {
+    transition: all 0.3s ease;
+    font-weight: 600;
+    border-radius: 50px;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+}
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 123, 255, 0.4);
+    }
+
+/* Mobile Button Adjustments */
+@media (max-width: 576px) {
+    .btn-primary {
+        width: 100%;
+        max-width: 300px;
+        padding: 12px 24px;
+    }
+}
+
+/* Search Box */
+.input-group {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.input-group-text {
+    border-color: #dee2e6;
+    background-color: #fff;
+}
+
+.form-control {
+    border-color: #dee2e6;
+    padding: 12px 16px;
+}
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    }
+
+/* Card Styles */
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+/* Table Styles */
+.table-responsive {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border: none;
+    padding: 16px 12px;
+}
+
+.table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    font-size: 0.875rem;
+}
+
+/* Mobile Table Adjustments */
+@media (max-width: 768px) {
+    .table thead {
+        display: none;
+    }
+
+    .table tbody tr {
+        display: block;
+        margin-bottom: 16px;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+        .table tbody td:last-child {
+            border-bottom: none;
+        }
+
+        .table tbody td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6c757d;
+            margin-right: 10px;
+        }
+}
+
+/* Badge Styles */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+/* Button Action Styles */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    border-radius: 8px;
+}
+
+/* Mobile Action Buttons */
+@media (max-width: 576px) {
+    .btn-sm {
+        padding: 8px 16px;
+        margin: 2px 0;
+        width: 100%;
+    }
+}
+
+/* Pagination */
+.pagination button {
+    margin: 0 4px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+    color: #0d6efd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .pagination button:hover:not(:disabled) {
+        background-color: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
+
+    .pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .pagination button.active {
+        background-color: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
+
+/* Mobile Pagination */
+@media (max-width: 576px) {
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center !important;
+    }
+
+        .pagination button {
+            margin: 2px;
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+}
+
+/* Loading Spinner */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* No Data State */
+#noData {
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    margin: 20px;
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 16px 24px 24px;
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+    }
+
+/* Mobile Form Adjustments */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .form-control, .form-select {
+        padding: 10px 14px;
+    }
+}
+
+/* DataTables Buttons Integration */
+.dt-buttons {
+    margin-bottom: 16px;
+}
+
+    .dt-buttons .btn {
+        margin-right: 8px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 0.875rem;
+    }
+
+/* Mobile DataTables Buttons */
+@media (max-width: 576px) {
+    .dt-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+        .dt-buttons .btn {
+            flex: 1;
+            min-width: calc(50% - 4px);
+            margin: 0;
+        }
+}
+
+/* Utility Classes */
+.shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#reports > .container > .row {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a2e;
+        color: #eee;
+    }
+
+    .card {
+        background-color: #16213e;
+        border-color: #0f3460;
+    }
+
+    .table {
+        color: #eee;
+    }
+
+    .form-control, .form-select {
+        background-color: #1a1a2e;
+        border-color: #0f3460;
+        color: #eee;
+    }
+}
