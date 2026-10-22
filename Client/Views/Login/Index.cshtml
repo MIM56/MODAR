@@ -8,7 +8,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <!-- ✅ GANTI dengan CDN Font Awesome yang stabil (tidak pakai kit yang error 403) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="/loginAssets/style.css" />
     <title>Sign In - MODAR</title>
@@ -46,9 +47,23 @@
                         <i class="fas fa-user"></i>
                         <input id="email" type="email" class="form-control" name="Email" placeholder="Email Address" required autocomplete="email" />
                     </div>
-                    <div class="input-field">
-                        <i class="fas fa-lock"></i>
+                    
+                    <!-- ✅ PASSWORD FIELD DENGAN SVG TOGGLE (TIDAK BERGANTUNG FONT AWESOME) -->
+                    <div class="input-field password-field">
+                        <i class="fas fa-lock lock-icon"></i>
                         <input id="password" type="password" name="Password" placeholder="Password" required autocomplete="current-password" />
+                        <button type="button" class="toggle-password-btn" id="togglePassword" title="Show/Hide Password" aria-label="Toggle password visibility">
+                            <!-- ✅ SVG ICON MATA - PASTI TERLIHAT -->
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <!-- SVG ICON MATA DICORET (hidden by default) -->
+                            <svg id="eyeSlashIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
                     </div>
                     
                     <button type="submit" class="btn solid" id="btnLogin">Sign In</button>
@@ -84,6 +99,33 @@
                 btnBackHome.addEventListener('click', function(e) {
                     e.preventDefault();
                     goToHome();
+                });
+            }
+
+            // ✅ TOGGLE PASSWORD DENGAN SVG - PASTI BERFUNGSI
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            const eyeSlashIcon = document.getElementById('eyeSlashIcon');
+            
+            if (togglePasswordBtn && passwordInput) {
+                togglePasswordBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    
+                    if (isPassword) {
+                        // Tampilkan password
+                        passwordInput.setAttribute('type', 'text');
+                        eyeIcon.style.display = 'none';
+                        eyeSlashIcon.style.display = 'block';
+                    } else {
+                        // Sembunyikan password
+                        passwordInput.setAttribute('type', 'password');
+                        eyeIcon.style.display = 'block';
+                        eyeSlashIcon.style.display = 'none';
+                    }
                 });
             }
 
