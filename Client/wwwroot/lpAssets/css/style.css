@@ -545,75 +545,168 @@ footer {
    SCROLL TO TOP BUTTON - MODERN & RESPONSIVE
    Posisi: Pojok Kanan Bawah, Terintegrasi dengan Footer
    ============================================== */
+/* ==============================================
+   SCROLL TO TOP BUTTON - FIXED & OPTIMIZED
+   Warna: Biru konsisten, tidak berubah putih
+   ============================================== */
 .scroll-to-top {
     position: fixed !important;
-    bottom: 2.5rem !important;
-    right: 2.5rem !important;
-    width: 60px !important;
-    height: 60px !important;
-    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+    bottom: 2rem !important;
+    right: 2rem !important;
+    width: 56px !important;
+    height: 56px !important;
+    background: var(--gradient-primary) !important;
     color: #ffffff !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     text-decoration: none !important;
-    z-index: 1050 !important; /* Di atas footer, di bawah navbar */
+    z-index: 1050 !important;
     opacity: 0;
     visibility: hidden;
-    transform: scale(0) rotate(-180deg);
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    box-shadow: 0 8px 25px rgba(20, 184, 166, 0.4);
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
     border: 3px solid rgba(255, 255, 255, 0.3);
     padding: 0 !important;
     margin: 0 !important;
+    cursor: pointer;
+    /* Hapus will-change yang bisa menyebabkan flickering */
 }
 
-    /* Show button when scrolled */
     .scroll-to-top.show {
         opacity: 1 !important;
         visibility: visible !important;
-        transform: scale(1) rotate(0deg) !important;
+        transform: scale(1);
+        /* Hapus animasi pulse yang berlebihan */
     }
 
-    /* Icon styling - BESAR dan JELAS */
     .scroll-to-top i {
-        font-size: 1.8rem !important;
+        font-size: 1.6rem !important;
         font-weight: 700;
+        color: #ffffff !important; /* ✅ Paksa warna putih untuk icon */
         transition: transform 0.3s ease;
     }
 
-    /* Hover effect */
+    /* Hover state - tetap biru */
     .scroll-to-top:hover {
-        background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%) !important;
-        transform: translateY(-5px) scale(1.1) !important;
-        box-shadow: 0 12px 35px rgba(20, 184, 166, 0.6);
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+        transform: translateY(-3px) scale(1.05) !important;
+        box-shadow: 0 12px 35px rgba(37, 99, 235, 0.6);
         border-color: rgba(255, 255, 255, 0.5);
     }
 
         .scroll-to-top:hover i {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
 
-    /* Active/Click effect */
+    /* ✅ Active/Click state - PAKSA warna biru, tidak putih */
     .scroll-to-top:active {
-        transform: translateY(-2px) scale(1.05) !important;
-        box-shadow: 0 8px 25px rgba(20, 184, 166, 0.5);
+        background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%) !important;
+        transform: translateY(-1px) scale(1.02) !important;
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        border-color: rgba(255, 255, 255, 0.4);
     }
 
-/* Pulse animation untuk button yang visible */
+        .scroll-to-top:active i {
+            color: #ffffff !important;
+            transform: translateY(0);
+        }
+
+    /* Focus state untuk accessibility */
+    .scroll-to-top:focus {
+        outline: 3px solid rgba(37, 99, 235, 0.5);
+        outline-offset: 3px;
+    }
+
+        .scroll-to-top:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+    .scroll-to-top:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.5);
+        outline-offset: 3px;
+    }
+
+/* Subtle pulse animation - lebih halus */
 @keyframes scrollPulse {
     0%, 100% {
-        box-shadow: 0 8px 25px rgba(20, 184, 166, 0.4);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
     }
 
     50% {
-        box-shadow: 0 8px 35px rgba(20, 184, 166, 0.7);
+        box-shadow: 0 8px 30px rgba(37, 99, 235, 0.6);
     }
 }
 
 .scroll-to-top.show {
-    animation: scrollPulse 2.5s ease-in-out infinite;
+    animation: scrollPulse 3s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .scroll-to-top {
+        bottom: 1.5rem !important;
+        right: 1.5rem !important;
+        width: 52px !important;
+        height: 52px !important;
+    }
+
+        .scroll-to-top i {
+            font-size: 1.5rem !important;
+        }
+}
+
+@media (max-width: 768px) {
+    .scroll-to-top {
+        bottom: 1.25rem !important;
+        right: 1.25rem !important;
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+        .scroll-to-top i {
+            font-size: 1.4rem !important;
+        }
+}
+
+@media (max-width: 576px) {
+    .scroll-to-top {
+        bottom: 1rem !important;
+        right: 1rem !important;
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+        .scroll-to-top i {
+            font-size: 1.3rem !important;
+        }
+}
+
+@media (max-width: 375px) {
+    .scroll-to-top {
+        bottom: 0.75rem !important;
+        right: 0.75rem !important;
+        width: 45px !important;
+        height: 45px !important;
+    }
+
+        .scroll-to-top i {
+            font-size: 1.2rem !important;
+        }
+}
+
+/* Accessibility - reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .scroll-to-top {
+        transition: opacity 0.3s ease, visibility 0.3s ease !important;
+        animation: none !important;
+    }
+
+        .scroll-to-top:hover {
+            transform: translateY(-2px) !important;
+        }
 }
 
 /* ===== RESPONSIVE SCROLL TO TOP ===== */
