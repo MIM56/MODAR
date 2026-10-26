@@ -8,7 +8,7 @@ let projectsData = [];
 let reportsData = [];
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log(" Admin Tables initialized");
+    console.log("🚀 Admin Tables initialized");
     initTabs();
     initCreateButtons();
     loadData();
@@ -23,13 +23,13 @@ function initTabs() {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
             const tabName = this.getAttribute('data-tab');
-
+            
             tabBtns.forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => {
                 c.classList.remove('active');
                 c.style.display = 'none';
             });
-
+            
             this.classList.add('active');
             const targetTab = document.getElementById(`${tabName}Tab`);
             if (targetTab) {
@@ -41,7 +41,7 @@ function initTabs() {
 }
 
 // ========================================
-// 2. INIT CREATE BUTTONS (FIXED)
+// 2. INIT CREATE BUTTONS (Employee, Project, Report)
 // ========================================
 function initCreateButtons() {
     // --- Create Employee ---
@@ -51,6 +51,22 @@ function initCreateButtons() {
             const form = document.getElementById('createEmployeeForm');
             if (form) form.reset();
             const modalEl = document.getElementById('createEmployeeModal');
+            if (modalEl) new bootstrap.Modal(modalEl).show();
+        });
+    }
+
+    // --- Create Project (BARU) ---
+    const createProjectBtn = document.getElementById('createProjectBtn');
+    if (createProjectBtn) {
+        createProjectBtn.addEventListener('click', async function () {
+            console.log("➕ Create Project button clicked!");
+            const form = document.getElementById('createProjectForm');
+            if (form) form.reset();
+
+            // Populate manager dropdown dengan employees yang ber-role Manager
+            await populateManagerDropdown('createProjectManagerId');
+            
+            const modalEl = document.getElementById('createProjectModal');
             if (modalEl) new bootstrap.Modal(modalEl).show();
         });
     }
@@ -68,14 +84,14 @@ function initCreateButtons() {
                 console.log("⏳ Loading projects data first...");
                 await loadProjects();
             }
-
+            
             // Isi dropdown project
             populateReportProjectDropdown('createReportProjectId');
-
+            
             // Reset nilai default
             const progressSelect = document.getElementById('createReportProgressReport');
             if (progressSelect) progressSelect.value = "";
-
+            
             const statusSelect = document.getElementById('createReportStatus');
             if (statusSelect) statusSelect.value = "0";
 
@@ -100,6 +116,7 @@ async function loadEmployees() {
         const response = await fetch(`${API_BASE}/Employees`);
         if (response.ok) {
             employeesData = await response.json();
+            console.log("✅ Employees loaded:", employeesData.length);
             renderEmployeesTable();
         }
     } catch (error) { console.error("❌ Error loading employees:", error); }
@@ -110,7 +127,7 @@ async function loadProjects() {
         const response = await fetch(`${API_BASE}/ProjectLists`);
         if (response.ok) {
             projectsData = await response.json();
-            console.log("✅ Projects loaded:", projectsData.length, projectsData);
+            console.log("✅ Projects loaded:", projectsData.length);
             renderProjectsTable();
         }
     } catch (error) { console.error("❌ Error loading projects:", error); }
@@ -123,7 +140,7 @@ async function loadReports() {
             reportsData = await response.json();
             renderReportsTable();
         }
-    } catch (error) { console.error(" Error loading reports:", error); }
+    } catch (error) { console.error("❌ Error loading reports:", error); }
 }
 
 function updateStats() {
@@ -147,6 +164,65 @@ function getEmployeeFirstName(emp) { return emp.firstName || emp.FirstName || ''
 function getEmployeeLastName(emp) { return emp.lastName || emp.LastName || ''; }
 function getEmployeePhone(emp) { return emp.phone || emp.Phone || ''; }
 function getEmployeeStatus(emp) { return emp.status || 'Active'; }
+
+// ✅ HELPER: Populate Manager Dropdown
+async function populateManagerDropdown(elementId) {
+    const select = document.getElementById(elementId);
+    if (!select) {
+        console.error(`❌ Select element ${elementId} not found!`);
+        return false;
+    }
+
+    select.innerHTML = '<option value="">Select Manager</option>';
+    
+    // Filter employees yang ber-role Manager
+    const managers = employeesData.filter(emp => 
+        getEmployeeRole(emp).toLowerCase() === 'manager'
+    );
+    
+    if (managers.length === 0) {
+        select.innerHTML = '<option value="">No managers available</option>';
+        return false;
+    }
+    
+    managers.forEach(manager => {
+        const option = document.createElement('option');
+        option.value = getEmployeeId(manager);
+        const fullName = `${getEmployeeFirstName(manager)} ${getEmployeeLastName(manager)}`.trim() || getEmployeeEmail(manager);
+        option.textContent = fullName;
+        select.appendChild(option);
+    });
+    
+    console.log(`✅ Populated ${elementId} with ${managers.length} managers`);
+    return true;
+}
+
+// ✅ HELPER: Populate Project Dropdown for Report
+function populateReportProjectDropdown(elementId, selectedValue = '') {
+    const select = document.getElementById(elementId);
+    if (!select) {
+        console.error(`❌ Select element ${elementId} not found!`);
+        return false;
+    }
+
+    select.innerHTML = '<option value="">Select Project</option>';
+    
+    if (!projectsData || projectsData.length === 0) {
+        select.innerHTML = '<option value="">No projects available</option>';
+        return false;
+    }
+    
+    projectsData.forEach(proj => {
+        const option = document.createElement('option');
+        option.value = proj.id;
+        option.textContent = proj.name || proj.title || 'Untitled Project';
+        if (proj.id == selectedValue || proj.id === selectedValue) {
+            option.selected = true;
+        }
+        select.appendChild(option);
+    });
+    return true;
+}
 
 // ========================================
 // 5. RENDER TABLES
@@ -192,7 +268,18 @@ function renderProjectsTable() {
         const projId = proj.id || proj.Id || index;
         const startDate = proj.startDate ? new Date(proj.startDate).toLocaleDateString('en-GB') : '-';
         const endDate = proj.endDate ? new Date(proj.endDate).toLocaleDateString('en-GB') : '-';
-        const managerName = proj.managerName || proj.manager || 'N/A';
+        
+        // ✅ FIX: Tampilkan nama manager jika ada
+        let managerName = 'N/A';
+        if (proj.managerId) {
+            const manager = employeesData.find(emp => 
+                (getEmployeeId(emp) == proj.managerId || getEmployeeId(emp) === proj.managerId)
+            );
+            if (manager) {
+                managerName = `${getEmployeeFirstName(manager)} ${getEmployeeLastName(manager)}`.trim() || getEmployeeEmail(manager);
+            }
+        }
+        
         return `<tr>
             <td>${index + 1}</td>
             <td><strong>${proj.name || proj.title || 'Untitled'}</strong></td>
@@ -282,11 +369,11 @@ async function submitCreateEmployee() {
 }
 
 function editEmployee(id) {
-    const emp = employeesData.find(e => getEmployeeId(e) == id || getEmployeeId(e).toString() === id.toString());
+    const emp = employeesData.find(e => getEmployeeId(e) === id || getEmployeeId(e).toString() === id.toString());
     if (!emp) { swal("Error", "Employee not found", "error"); return; }
 
     const safeSet = (elId, val) => { const el = document.getElementById(elId); if (el) el.value = val !== undefined && val !== null ? val : ''; };
-
+    
     safeSet('editEmployeeId', getEmployeeId(emp));
     safeSet('editEmail', getEmployeeEmail(emp));
     safeSet('editPhone', getEmployeePhone(emp));
@@ -327,13 +414,13 @@ async function submitEditEmployee() {
             swal("Error", `Failed: ${await response.text()}`, "error");
         }
     } catch (error) {
-        console.error("❌ Error:", error);
+        console.error(" Error:", error);
         swal("Error", "Network error occurred.", "error");
     }
 }
 
 async function deleteEmployee(id) {
-    const emp = employeesData.find(e => getEmployeeId(e) == id || getEmployeeId(e).toString() === id.toString());
+    const emp = employeesData.find(e => getEmployeeId(e) === id || getEmployeeId(e).toString() === id.toString());
     if (!emp) return;
 
     swal({
@@ -361,7 +448,7 @@ async function deleteEmployee(id) {
 }
 
 function viewEmployee(id) {
-    const emp = employeesData.find(e => getEmployeeId(e) == id || getEmployeeId(e).toString() === id.toString());
+    const emp = employeesData.find(e => getEmployeeId(e) === id || getEmployeeId(e).toString() === id.toString());
     if (!emp) return;
 
     swal({
@@ -387,40 +474,107 @@ function viewEmployee(id) {
 }
 
 // ========================================
-// 7. REPORT CRUD (FIXED - PROJECT ID AS STRING)
+// 7. PROJECT CRUD (BARU)
 // ========================================
+async function submitCreateProject() {
+    const title = document.getElementById('createProjectTitle').value.trim();
+    const description = document.getElementById('createProjectDescription').value.trim();
+    const startDate = document.getElementById('createProjectStartDate').value;
+    const endDate = document.getElementById('createProjectEndDate').value;
+    const managerId = document.getElementById('createProjectManagerId').value || null;
+    const status = document.getElementById('createProjectStatus').value;
 
-// ✅ HELPER: Populate Project Dropdown
-function populateReportProjectDropdown(elementId, selectedValue = '') {
-    const select = document.getElementById(elementId);
-    if (!select) return false;
-
-    select.innerHTML = '<option value="">Select Project</option>';
-
-    if (!projectsData || projectsData.length === 0) {
-        select.innerHTML = '<option value="">No projects available</option>';
-        return false;
+    // Validasi
+    if (!title || title.length < 3 || title.length > 50) {
+        swal("Validation Error", "Project title must be between 3-50 characters", "warning"); return;
     }
+    if (!description || description.length < 10 || description.length > 255) {
+        swal("Validation Error", "Description must be between 10-255 characters", "warning"); return;
+    }
+    if (!startDate) { swal("Validation Error", "Please select start date", "warning"); return; }
+    if (!endDate) { swal("Validation Error", "Please select end date", "warning"); return; }
+    if (!status) { swal("Validation Error", "Please select status", "warning"); return; }
 
-    console.log("📋 Populating projects dropdown:", projectsData);
+    const projectData = { 
+        name: title,
+        title: title,
+        description,
+        startDate,
+        endDate,
+        managerId: managerId ? parseInt(managerId) : null,
+        status: parseInt(status)
+    };
 
-    projectsData.forEach(proj => {
-        const option = document.createElement('option');
-        // ✅ PENTING: Gunakan proj.id sebagai string, jangan di-parseInt
-        option.value = proj.id || proj.Id || '';
-        option.textContent = proj.name || proj.title || 'Untitled Project';
+    console.log("📝 Creating project:", projectData);
 
-        if (proj.id == selectedValue || proj.Id == selectedValue || proj.id === selectedValue) {
-            option.selected = true;
+    try {
+        const response = await fetch(`${API_BASE}/ProjectLists`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(projectData)
+        });
+
+        if (response.ok) {
+            swal("Success!", "Project created successfully!", "success");
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createProjectModal'));
+            if (modal) modal.hide();
+            await loadProjects();
+            updateStats();
+        } else {
+            const errorText = await response.text();
+            console.error("❌ Server error:", errorText);
+            swal("Error", `Failed to create project: ${response.status}`, "error");
         }
-
-        select.appendChild(option);
-    });
-
-    console.log(`✅ Populated ${elementId} with ${projectsData.length} projects`);
-    return true;
+    } catch (error) {
+        console.error("❌ Error creating project:", error);
+        swal("Error", "Network error occurred.", "error");
+    }
 }
 
+function viewProject(id) {
+    const proj = projectsData.find(p => (p.id || p.Id) == id || (p.id || p.Id).toString() === id.toString());
+    if (!proj) return;
+
+    const statusText = proj.status === 1 ? 'On Progress' : (proj.status === 2 ? 'Done' : 'Pending');
+    const startDate = proj.startDate ? new Date(proj.startDate).toLocaleDateString('en-GB') : '-';
+    const endDate = proj.endDate ? new Date(proj.endDate).toLocaleDateString('en-GB') : '-';
+    
+    let managerName = 'N/A';
+    if (proj.managerId) {
+        const manager = employeesData.find(emp => 
+            (getEmployeeId(emp) == proj.managerId || getEmployeeId(emp) === proj.managerId)
+        );
+        if (manager) {
+            managerName = `${getEmployeeFirstName(manager)} ${getEmployeeLastName(manager)}`.trim() || getEmployeeEmail(manager);
+        }
+    }
+
+    swal({
+        title: "Project Details",
+        text: "",
+        content: {
+            element: "div",
+            attributes: {
+                innerHTML: `
+                    <div style="text-align: left; padding: 10px; color: #0f172a !important;">
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Title:</strong><span>${proj.name || proj.title || 'N/A'}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Start Date:</strong><span>${startDate}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">End Date:</strong><span>${endDate}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Status:</strong><span>${statusText}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Manager:</strong><span>${managerName}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Desc:</strong><span>${proj.description || 'N/A'}</span></div>
+                    </div>`,
+                style: "font-size: 14px; line-height: 1.8;"
+            }
+        },
+        icon: "info",
+        buttons: { confirm: { text: "OK", value: true, visible: true, className: "btn btn-primary", closeModal: true } }
+    });
+}
+
+// ========================================
+// 8. REPORT CRUD
+// ========================================
 function viewReport(id) {
     const rep = reportsData.find(r => (r.id || r.Id) == id || (r.id || r.Id).toString() === id.toString());
     if (!rep) return;
@@ -462,7 +616,7 @@ function editReport(id) {
     populateReportProjectDropdown('editReportProjectId', rep.projectId);
 
     const safeSet = (elId, val) => { const el = document.getElementById(elId); if (el) el.value = val !== undefined && val !== null ? val.toString() : ''; };
-
+    
     safeSet('editReportId', rep.id);
     safeSet('editReportTitle', rep.title || '');
     safeSet('editReportDescription', rep.description || '');
@@ -473,7 +627,6 @@ function editReport(id) {
     new bootstrap.Modal(document.getElementById('editReportModal')).show();
 }
 
-// ✅ FIXED: Submit Create Report - PROJECT ID AS STRING
 async function submitCreateReport() {
     const title = document.getElementById('createReportTitle').value.trim();
     const description = document.getElementById('createReportDescription').value.trim();
@@ -482,15 +635,6 @@ async function submitCreateReport() {
     const projectId = document.getElementById('createReportProjectId').value;
     const status = document.getElementById('createReportStatus').value;
     const doneBy = 1;
-
-    console.log(" Form values:", {
-        title,
-        description,
-        date,
-        progressReport,
-        projectId,
-        status
-    });
 
     // 1. Validasi ProjectId - PENTING!
     if (!projectId || projectId === "" || projectId === "null" || projectId === "undefined") {
@@ -507,32 +651,29 @@ async function submitCreateReport() {
     if (!title || title.length < 3 || title.length > 100) {
         swal("Validation Error", "Report title must be between 3-100 characters", "warning"); return;
     }
-    if (!description || description.length < 10 || description.length > 1000) {
-        swal("Validation Error", "Description must be between 10-1000 characters", "warning"); return;
+    if (!description || description.length < 10 || description.length > 500) {
+        swal("Validation Error", "Description must be between 10-500 characters", "warning"); return;
     }
     if (!date) { swal("Validation Error", "Please select a date", "warning"); return; }
     if (!progressReport) { swal("Validation Error", "Please select progress percentage", "warning"); return; }
     if (!status) { swal("Validation Error", "Please select status", "warning"); return; }
 
-    const reportData = {
-        title,
+    const reportData = { 
+        title, 
         description,
-        date,
+        date, 
         progressReport: parseInt(progressReport),
-        projectId: projectId, // ✅ KIRIM SEBAGAI STRING, JANGAN parseInt
+        projectId: parseInt(projectId),
         status: parseInt(status),
-        doneBy
+        doneBy 
     };
 
-    console.log(" Sending report data:", reportData);
+    console.log("📝 Sending report data:", reportData);
 
     try {
         const response = await fetch(`${API_BASE}/Reports`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify(reportData)
         });
 
@@ -544,87 +685,10 @@ async function submitCreateReport() {
         } else {
             const errorText = await response.text();
             console.error("❌ Server error:", errorText);
-
-            let errorMsg = `Failed to create report: ${response.status}`;
-
-            try {
-                const errorJson = JSON.parse(errorText);
-                if (errorJson.errors) {
-                    errorMsg = Object.values(errorJson.errors).flat().join('\n');
-                } else if (errorJson.message) {
-                    errorMsg = errorJson.message;
-                }
-            } catch (e) {
-                // Ignore parse error
-            }
-
-            swal("Error", errorMsg, "error");
+            swal("Error", `Failed to create report: ${response.status}`, "error");
         }
     } catch (error) {
         console.error("❌ Error creating report:", error);
-        swal("Error", "Network error occurred.", "error");
-    }
-}
-
-// ✅ FIXED: Submit Edit Report
-async function submitEditReport() {
-    const id = document.getElementById('editReportId').value;
-    const title = document.getElementById('editReportTitle').value.trim();
-    const description = document.getElementById('editReportDescription').value.trim();
-    const date = document.getElementById('editReportDate').value;
-    const progressReport = document.getElementById('editReportProgressReport').value;
-    const projectId = document.getElementById('editReportProjectId').value;
-    const status = document.getElementById('editReportStatus').value;
-    const doneBy = 1;
-
-    if (!projectId || projectId === "" || projectId === "null") {
-        swal("Validation Error", "Please select a project from the dropdown", "warning");
-        return;
-    }
-
-    if (!title || title.length < 3 || title.length > 100) {
-        swal("Validation Error", "Report title must be between 3-100 characters", "warning"); return;
-    }
-    if (!description || description.length < 10 || description.length > 1000) {
-        swal("Validation Error", "Description must be between 10-1000 characters", "warning"); return;
-    }
-
-    const reportData = {
-        title,
-        description,
-        date,
-        progressReport: parseInt(progressReport),
-        projectId: projectId, // ✅ KIRIM SEBAGAI STRING
-        status: parseInt(status),
-        doneBy
-    };
-
-    console.log("✏️ Updating report:", reportData);
-
-    try {
-        const response = await fetch(`${API_BASE}/Reports/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(reportData)
-        });
-
-        if (response.ok) {
-            swal("Success!", "Report updated successfully!", "success");
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editReportModal'));
-            if (modal) modal.hide();
-            await loadReports();
-        } else {
-            const errorData = await response.json().catch(() => ({}));
-            let errorMsg = "Failed to update report.";
-            if (errorData.errors) errorMsg = Object.values(errorData.errors).flat().join('\n');
-            else if (errorData.message) errorMsg = errorData.message;
-            swal("Error", errorMsg, "error");
-        }
-    } catch (error) {
-        console.error(" Error updating report:", error);
         swal("Error", "Network error occurred.", "error");
     }
 }
@@ -655,14 +719,3 @@ async function deleteReport(id) {
         }
     });
 }
-
-// ========================================
-// 8. PROJECT PLACEHOLDERS
-// ========================================
-function viewProject(id) {
-    const proj = projectsData.find(p => (p.id || p.Id) == id || (p.id || p.Id).toString() === id.toString());
-    if (!proj) return;
-    swal("Project Details", `Title: ${proj.name || proj.title}\nStatus: ${proj.status === 1 ? 'On Progress' : proj.status === 2 ? 'Done' : 'Pending'}`, "info");
-}
-function editProject(id) { swal("Info", "Project edit will redirect to Manager Projects page", "info"); }
-function deleteProject(id) { swal("Info", "Project delete functionality will be implemented", "info"); }

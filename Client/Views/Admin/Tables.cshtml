@@ -69,6 +69,7 @@
             <div class="table-header">
                 <h3 class="table-title"><i class="fas fa-folder"></i> All Projects</h3>
                 <div class="table-actions">
+                    <button class="btn-create" id="createProjectBtn"><i class="fas fa-plus"></i> Create Project</button>
                     <button class="btn-export"><i class="fas fa-file-excel"></i> Excel</button>
                     <button class="btn-export"><i class="fas fa-file-pdf"></i> PDF</button>
                 </div>
@@ -186,7 +187,70 @@
 </div>
 
 <!-- ========================================
-     CREATE REPORT MODAL (FIXED: DROPDOWN PROGRESS)
+     CREATE PROJECT MODAL (BARU)
+     ======================================== -->
+<div class="modal fade" id="createProjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-folder-plus me-2"></i> Create New Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createProjectForm">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Project Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createProjectTitle" required placeholder="Enter project title" minlength="3" maxlength="50">
+                            <small class="form-text text-muted">3-50 characters</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="createProjectDescription" rows="3" required placeholder="Enter project description" minlength="10" maxlength="255"></textarea>
+                            <small class="form-text text-muted">10-255 characters</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="createProjectStartDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="createProjectEndDate" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Manager (Optional)</label>
+                            <select class="form-select" id="createProjectManagerId">
+                                <option value="">Select Manager</option>
+                            </select>
+                            <small class="form-text text-muted">Assign a manager to this project</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select" id="createProjectStatus" required>
+                                <option value="0">Pending</option>
+                                <option value="1">On Progress</option>
+                                <option value="2">Done</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitCreateProject()"><i class="fas fa-save me-2"></i>Create Project</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================
+     CREATE REPORT MODAL
      ======================================== -->
 <div class="modal fade" id="createReportModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -207,8 +271,8 @@
                     <div class="row">
                         <div class="col-12 mb-3">
                             <label class="form-label">Description <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="createReportDescription" rows="3" required minlength="10" maxlength="1000" placeholder="Enter report description"></textarea>
-                            <small class="form-text text-muted">10-1000 characters</small>
+                            <textarea class="form-control" id="createReportDescription" rows="3" required minlength="10" maxlength="500" placeholder="Enter report description"></textarea>
+                            <small class="form-text text-muted">10-500 characters</small>
                         </div>
                     </div>
                     <div class="row">
@@ -256,83 +320,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="submitCreateReport()"><i class="fas fa-save me-2"></i>Create Report</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ========================================
-     EDIT REPORT MODAL (FIXED: DROPDOWN PROGRESS)
-     ======================================== -->
-<div class="modal fade" id="editReportModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-edit me-2"></i> Edit Report</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editReportForm">
-                    <input type="hidden" id="editReportId">
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label class="form-label">Report Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editReportTitle" required minlength="3" maxlength="100">
-                            <small class="form-text text-muted">3-100 characters</small>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label class="form-label">Description <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="editReportDescription" rows="3" required minlength="10" maxlength="1000"></textarea>
-                            <small class="form-text text-muted">10-1000 characters</small>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="editReportDate" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Progress Report <span class="text-danger">*</span></label>
-                            <select class="form-select" id="editReportProgressReport" required>
-                                <option value="">Select Progress</option>
-                                <option value="0">0% - Not Started</option>
-                                <option value="10">10% - Initial Phase</option>
-                                <option value="15">15% - Early Progress</option>
-                                <option value="25">25% - Quarter Complete</option>
-                                <option value="40">40% - Approaching Half</option>
-                                <option value="45">45% - Nearly Half</option>
-                                <option value="50">50% - Half Complete</option>
-                                <option value="60">60% - More Than Half</option>
-                                <option value="75">75% - Three Quarter Complete</option>
-                                <option value="90">90% - Almost Complete</option>
-                                <option value="100">100% - Completed</option>
-                            </select>
-                            <small class="form-text text-muted">Select progress percentage</small>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Project <span class="text-danger">*</span></label>
-                            <select class="form-select" id="editReportProjectId" required>
-                                <option value="">Select Project</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Status <span class="text-danger">*</span></label>
-                            <select class="form-select" id="editReportStatus" required>
-                                <option value="0">Pending</option>
-                                <option value="1">On Progress</option>
-                                <option value="2">Done</option>
-                            </select>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitEditReport()"><i class="fas fa-save me-2"></i>Save Changes</button>
             </div>
         </div>
     </div>
