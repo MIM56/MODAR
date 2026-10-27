@@ -26,6 +26,7 @@ html {
     font-size: 16px;
     position: relative;
     min-height: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -34,6 +35,7 @@ body {
     background-color: #ffffff;
     line-height: 1.6;
     overflow-x: hidden;
+    max-width: 100vw;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -88,6 +90,7 @@ a {
 
     .navbar-toggler:focus {
         box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+        outline: none;
     }
 
 .navbar-toggler-icon {
@@ -199,10 +202,10 @@ a {
 .hero-section {
     padding: 140px 0 80px;
     background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
-    min-height: 100vh;
+    min-height: auto;
     display: flex;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .hero-content h1 {
@@ -272,51 +275,51 @@ a {
     display: block;
 }
 
-/* ===== MOBILE RESPONSIVE: HERO ===== */
+/* ===== MOBILE RESPONSIVE: HERO - FIXED ===== */
 @media (max-width: 991px) {
-    .hero-image-wrapper, .col-lg-7 {
-        display: none !important;
-    }
-
-    .hero-section .col-lg-5 {
-        width: 100%;
-        max-width: 100%;
-        flex: 0 0 100%;
-    }
-
     .hero-section {
-        padding: 120px 0 60px;
+        padding: 100px 0 60px;
         min-height: auto;
     }
 
     .hero-content {
-        text-align: center !important;
-        padding: 2rem 1rem;
+        text-align: center;
+        padding: 1rem;
     }
 
         .hero-content h1 {
             font-size: 2.25rem;
+            margin-bottom: 1rem;
         }
 
     .hero-description {
         font-size: 1rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
 
     .hero-buttons {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
         justify-content: center !important;
-        margin: 0 auto;
+        width: 100% !important;
+        margin: 0 auto !important;
+        gap: 1rem !important;
     }
 
-    .btn-hero {
-        width: 100%;
-        max-width: 300px;
-    }
+        .hero-buttons .btn-hero {
+            width: 100% !important;
+            max-width: 280px !important;
+            margin: 0 auto !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
 }
 
 @media (max-width: 576px) {
     .hero-section {
-        padding: 100px 0 40px;
+        padding: 90px 0 40px;
     }
 
     .hero-content h1 {
@@ -324,13 +327,18 @@ a {
     }
 
     .hero-description {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
     }
 
-    .btn-hero {
-        padding: 0.875rem 2rem;
-        font-size: 1rem;
+    .hero-buttons {
+        padding: 0 1rem !important;
     }
+
+        .hero-buttons .btn-hero {
+            max-width: 260px !important;
+            font-size: 0.95rem !important;
+        }
 }
 
 /* ===== SECTIONS ===== */
@@ -455,7 +463,7 @@ a {
 footer {
     background: var(--dark-color);
     color: white;
-    padding: 80px 0 120px; /* Padding bawah ditambah agar tombol scroll tidak menutupi konten footer di mobile */
+    padding: 80px 0 120px;
     position: relative;
 }
 
@@ -542,12 +550,7 @@ footer {
 }
 
 /* ==============================================
-   SCROLL TO TOP BUTTON - MODERN & RESPONSIVE
-   Posisi: Pojok Kanan Bawah, Terintegrasi dengan Footer
-   ============================================== */
-/* ==============================================
    SCROLL TO TOP BUTTON - FIXED & OPTIMIZED
-   Warna: Biru konsisten, tidak berubah putih
    ============================================== */
 .scroll-to-top {
     position: fixed !important;
@@ -572,24 +575,21 @@ footer {
     padding: 0 !important;
     margin: 0 !important;
     cursor: pointer;
-    /* Hapus will-change yang bisa menyebabkan flickering */
 }
 
     .scroll-to-top.show {
         opacity: 1 !important;
         visibility: visible !important;
         transform: scale(1);
-        /* Hapus animasi pulse yang berlebihan */
     }
 
     .scroll-to-top i {
         font-size: 1.6rem !important;
         font-weight: 700;
-        color: #ffffff !important; /* ✅ Paksa warna putih untuk icon */
+        color: #ffffff !important;
         transition: transform 0.3s ease;
     }
 
-    /* Hover state - tetap biru */
     .scroll-to-top:hover {
         background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
         transform: translateY(-3px) scale(1.05) !important;
@@ -601,7 +601,6 @@ footer {
             transform: translateY(-2px);
         }
 
-    /* ✅ Active/Click state - PAKSA warna biru, tidak putih */
     .scroll-to-top:active {
         background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%) !important;
         transform: translateY(-1px) scale(1.02) !important;
@@ -614,7 +613,6 @@ footer {
             transform: translateY(0);
         }
 
-    /* Focus state untuk accessibility */
     .scroll-to-top:focus {
         outline: 3px solid rgba(37, 99, 235, 0.5);
         outline-offset: 3px;
@@ -629,7 +627,7 @@ footer {
         outline-offset: 3px;
     }
 
-/* Subtle pulse animation - lebih halus */
+/* Pulse animation */
 @keyframes scrollPulse {
     0%, 100% {
         box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
@@ -644,7 +642,7 @@ footer {
     animation: scrollPulse 3s ease-in-out infinite;
 }
 
-/* Responsive */
+/* Responsive Scroll to Top */
 @media (max-width: 991px) {
     .scroll-to-top {
         bottom: 1.5rem !important;
@@ -656,6 +654,10 @@ footer {
         .scroll-to-top i {
             font-size: 1.5rem !important;
         }
+
+    footer {
+        padding-bottom: 110px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -668,78 +670,6 @@ footer {
 
         .scroll-to-top i {
             font-size: 1.4rem !important;
-        }
-}
-
-@media (max-width: 576px) {
-    .scroll-to-top {
-        bottom: 1rem !important;
-        right: 1rem !important;
-        width: 48px !important;
-        height: 48px !important;
-    }
-
-        .scroll-to-top i {
-            font-size: 1.3rem !important;
-        }
-}
-
-@media (max-width: 375px) {
-    .scroll-to-top {
-        bottom: 0.75rem !important;
-        right: 0.75rem !important;
-        width: 45px !important;
-        height: 45px !important;
-    }
-
-        .scroll-to-top i {
-            font-size: 1.2rem !important;
-        }
-}
-
-/* Accessibility - reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    .scroll-to-top {
-        transition: opacity 0.3s ease, visibility 0.3s ease !important;
-        animation: none !important;
-    }
-
-        .scroll-to-top:hover {
-            transform: translateY(-2px) !important;
-        }
-}
-
-/* ===== RESPONSIVE SCROLL TO TOP ===== */
-
-/* Tablet */
-@media (max-width: 991px) {
-    .scroll-to-top {
-        bottom: 2rem !important;
-        right: 2rem !important;
-        width: 55px !important;
-        height: 55px !important;
-    }
-
-        .scroll-to-top i {
-            font-size: 1.6rem !important;
-        }
-
-    footer {
-        padding-bottom: 110px;
-    }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .scroll-to-top {
-        bottom: 1.5rem !important;
-        right: 1.5rem !important;
-        width: 50px !important;
-        height: 50px !important;
-    }
-
-        .scroll-to-top i {
-            font-size: 1.5rem !important;
         }
 
     footer {
@@ -747,17 +677,16 @@ footer {
     }
 }
 
-/* Small Mobile */
 @media (max-width: 576px) {
     .scroll-to-top {
-        bottom: 1.25rem !important;
-        right: 1.25rem !important;
+        bottom: 1rem !important;
+        right: 1rem !important;
         width: 48px !important;
         height: 48px !important;
     }
 
         .scroll-to-top i {
-            font-size: 1.4rem !important;
+            font-size: 1.3rem !important;
         }
 
     footer {
@@ -765,22 +694,7 @@ footer {
     }
 }
 
-/* Very Small Mobile */
 @media (max-width: 375px) {
-    .scroll-to-top {
-        bottom: 1rem !important;
-        right: 1rem !important;
-        width: 45px !important;
-        height: 45px !important;
-    }
-
-        .scroll-to-top i {
-            font-size: 1.3rem !important;
-        }
-}
-
-/* Landscape mobile */
-@media (max-height: 500px) and (orientation: landscape) {
     .scroll-to-top {
         bottom: 0.75rem !important;
         right: 0.75rem !important;
@@ -793,7 +707,6 @@ footer {
         }
 }
 
-/* Reduced motion preference (Accessibility) */
 @media (prefers-reduced-motion: reduce) {
     .scroll-to-top {
         transition: opacity 0.3s ease, visibility 0.3s ease !important;
@@ -805,19 +718,89 @@ footer {
         }
 }
 
-/* Focus states untuk accessibility */
-.scroll-to-top:focus {
-    outline: 3px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 3px;
-}
-
-    .scroll-to-top:focus:not(:focus-visible) {
-        outline: none;
+/* ===== FIX: NAVBAR TOGGLER POSITIONING - MOBILE/TABLET ===== */
+@media (max-width: 991px) {
+    .navbar-toggler {
+        position: absolute !important;
+        right: 1rem !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        z-index: 1001 !important;
+        margin-left: auto !important;
     }
 
-.scroll-to-top:focus-visible {
-    outline: 3px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 3px;
+    .navbar-brand {
+        position: relative !important;
+        z-index: 1001 !important;
+    }
+
+    .navbar .container {
+        position: relative !important;
+    }
+
+    .navbar-collapse.show {
+        position: absolute !important;
+        top: 100% !important;
+        left: 1rem !important;
+        right: 1rem !important;
+        z-index: 1000 !important;
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* ===== FIX: PREVENT HORIZONTAL SCROLL ===== */
+@media (max-width: 991px) {
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+
+    .container {
+        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
+
+/* ===== FIX: SECTION SPACING - MOBILE ===== */
+@media (max-width: 991px) {
+    .section-padding {
+        padding: 60px 0 !important;
+    }
+
+    .section-title {
+        margin-bottom: 2rem !important;
+    }
+
+    .service {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .eduexp {
+        padding: 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .section-padding {
+        padding: 40px 0 !important;
+    }
+
+    .section-title {
+        margin-bottom: 1.5rem !important;
+    }
+
+        .section-title h1 {
+            font-size: 1.75rem !important;
+        }
+
+    .service h5 {
+        font-size: 1.1rem !important;
+    }
+
+    .eduexp h5 {
+        font-size: 1.25rem !important;
+    }
 }
 
 /* ===== UTILITIES ===== */

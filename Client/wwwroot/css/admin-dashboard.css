@@ -1,6 +1,5 @@
 ﻿/* ========================================
-   ADMIN DASHBOARD - SAMA DENGAN MANAGER
-   Light Mode: White, Dark Mode: Dark
+   ADMIN DASHBOARD - CLEAN & FIXED
    ======================================== */
 
 :root {
@@ -11,7 +10,6 @@
     --warning: #f59e0b;
     --danger: #ef4444;
     --info: #06b6d4;
-    /* LIGHT MODE */
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
     --text-primary: #0f172a;
@@ -36,10 +34,11 @@ body {
     background: var(--bg-main);
     color: var(--text-primary);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 /* ========================================
-   HERO SECTION - PUTIH (SAMA DENGAN MANAGER)
+   HERO SECTION
    ======================================== */
 .hero-section {
     background: #ffffff !important;
@@ -67,14 +66,14 @@ body {
     font-weight: 800 !important;
     margin-bottom: 12px !important;
     letter-spacing: -0.02em !important;
-    color: var(--text-primary) !important; /* HITAM */
+    color: var(--text-primary) !important;
     line-height: 1.2 !important;
 }
 
 .hero-subtitle {
     font-size: 16px !important;
     font-weight: 500 !important;
-    color: var(--text-secondary) !important; /* ABU-ABU */
+    color: var(--text-secondary) !important;
     line-height: 1.6 !important;
 }
 
@@ -104,7 +103,7 @@ body {
 .mini-stat-value {
     font-size: 32px !important;
     font-weight: 800 !important;
-    color: var(--text-primary) !important; /* HITAM */
+    color: var(--text-primary) !important;
     margin-bottom: 6px !important;
     line-height: 1 !important;
 }
@@ -112,7 +111,7 @@ body {
 .mini-stat-label {
     font-size: 12px !important;
     font-weight: 600 !important;
-    color: var(--text-muted) !important; /* ABU-ABU */
+    color: var(--text-muted) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -125,7 +124,7 @@ body {
     }
 
 /* ========================================
-   CONTAINER
+   CONTAINER & GRIDS
    ======================================== */
 .container {
     max-width: 1400px;
@@ -133,9 +132,6 @@ body {
     padding: 0 24px;
 }
 
-/* ========================================
-   STATS GRID - PUTIH
-   ======================================== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -181,7 +177,7 @@ body {
 .stat-value {
     font-size: 32px !important;
     font-weight: 800 !important;
-    color: var(--text-primary) !important; /* HITAM */
+    color: var(--text-primary) !important;
     line-height: 1.2 !important;
     margin-bottom: 8px !important;
 }
@@ -236,7 +232,7 @@ body {
 }
 
 /* ========================================
-   CHARTS GRID - PUTIH
+   CHARTS & ACTIVITY
    ======================================== */
 .charts-grid {
     display: grid;
@@ -267,7 +263,7 @@ body {
 .chart-title {
     font-size: 16px !important;
     font-weight: 700 !important;
-    color: var(--text-primary) !important; /* HITAM */
+    color: var(--text-primary) !important;
     display: flex !important;
     align-items: center !important;
     gap: 10px !important;
@@ -284,9 +280,6 @@ body {
     min-height: 300px !important;
 }
 
-/* ========================================
-   ACTIVITY SECTION
-   ======================================== */
 .activity-section {
     background: var(--bg-card) !important;
     border-radius: var(--radius-lg) !important;
@@ -521,7 +514,7 @@ body.dark-mode {
     }
 
 /* ========================================
-   RESPONSIVE - TABLET
+   RESPONSIVE - TABLET & MOBILE
    ======================================== */
 @media (max-width: 1024px) {
     .hero-title {
@@ -533,9 +526,6 @@ body.dark-mode {
     }
 }
 
-/* ========================================
-   RESPONSIVE - MOBILE
-   ======================================== */
 @media (max-width: 768px) {
     .hero-section {
         padding: 32px 0 24px !important;
@@ -609,8 +599,7 @@ body.dark-mode {
         padding: 16px 20px !important;
     }
 
-    .activity-table th,
-    .activity-table td {
+    .activity-table th, .activity-table td {
         padding: 12px 16px !important;
         font-size: 13px !important;
     }
@@ -645,4 +634,460 @@ body.dark-mode {
         padding: 16px !important;
         min-height: 260px !important;
     }
+}
+
+/* ========================================
+   ✅ MOBILE SIDEBAR - FIXED & CLEAN
+   ======================================== */
+@media (max-width: 991px) {
+    /* Sidebar mobile */
+    .sidenav {
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 280px !important;
+        max-width: 280px !important;
+        z-index: 1050 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12) !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+        .sidenav.show {
+            transform: translateX(0) !important;
+        }
+
+    /* Sidebar header - Logo area */
+    .sidenav-header {
+        padding: 16px !important;
+        border-bottom: 1px solid var(--border) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-shrink: 0 !important;
+        position: sticky !important;
+        top: 0 !important;
+        background: #ffffff !important;
+        z-index: 10 !important;
+    }
+
+        .sidenav-header .navbar-brand {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+            .sidenav-header .navbar-brand img {
+                height: 32px !important;
+                width: auto !important;
+            }
+
+    #iconSidenav {
+        display: none !important;
+    }
+
+    /* Sidebar navigation area */
+    .sidenav .collapse.navbar-collapse {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 8px 12px !important;
+    }
+
+    .sidenav .navbar-nav {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .sidenav .nav-item {
+        margin-bottom: 2px !important;
+    }
+
+    .sidenav .nav-link {
+        padding: 10px 14px !important;
+        border-radius: 8px !important;
+        color: #475569 !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        transition: all 0.3s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+        .sidenav .nav-link:hover {
+            background: #f1f5f9 !important;
+            color: #4f46e5 !important;
+        }
+
+        .sidenav .nav-link.active {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
+        }
+
+        .sidenav .nav-link .icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: rgba(79, 70, 229, 0.1) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .sidenav .nav-link:hover .icon {
+            background: rgba(79, 70, 229, 0.2) !important;
+            transform: scale(1.05) !important;
+        }
+
+        .sidenav .nav-link.active .icon {
+            background: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .sidenav .nav-link .icon i {
+            font-size: 16px !important;
+        }
+
+    .sidenav hr.horizontal.dark {
+        margin: 8px 12px !important;
+        opacity: 0.15 !important;
+    }
+
+    /* ✅ SIGN OUT BUTTON - FULL RED, CLEAN & MODERN */
+    .sidenav-footer {
+        padding: 16px !important;
+        border-top: 1px solid var(--border) !important;
+        flex-shrink: 0 !important;
+        background: transparent !important;
+    }
+
+    .btn-sign-out-mobile {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        width: 100% !important;
+        padding: 14px 20px !important;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 15px !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35) !important;
+        letter-spacing: 0.3px !important;
+    }
+
+        .btn-sign-out-mobile:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5) !important;
+            color: white !important;
+        }
+
+        .btn-sign-out-mobile:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3) !important;
+        }
+
+        .btn-sign-out-mobile i {
+            font-size: 18px !important;
+            transition: transform 0.3s ease !important;
+        }
+
+        .btn-sign-out-mobile:hover i {
+            transform: translateX(4px) !important;
+        }
+
+    /* Overlay gelap */
+    .sidenav-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        z-index: 1045 !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transition: all 0.3s ease !important;
+        pointer-events: none !important;
+        backdrop-filter: blur(4px) !important;
+    }
+
+        .sidenav-overlay.show {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+
+    /* Hamburger button di navbar */
+    .navbar-toggler.d-lg-none {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 10px !important;
+        padding: 8px 12px !important;
+        cursor: pointer !important;
+        position: relative !important;
+        z-index: 1060 !important;
+        pointer-events: auto !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-right: 12px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    }
+
+        .navbar-toggler.d-lg-none:hover {
+            background: rgba(255, 255, 255, 1) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%234f46e5' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        width: 22px !important;
+        height: 22px !important;
+    }
+
+    /* Main content */
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .navbar {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+        .navbar .container-fluid {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            flex-wrap: nowrap !important;
+        }
+
+            .navbar .container-fluid > nav {
+                flex: 1 !important;
+                margin: 0 12px !important;
+            }
+
+            .navbar .container-fluid > .d-flex {
+                flex-shrink: 0 !important;
+            }
+
+    /* Dark mode mobile sidebar */
+    body.dark-mode .sidenav {
+        background: #1e293b !important;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    body.dark-mode .sidenav-header {
+        background: #1e293b !important;
+        border-bottom-color: #334155 !important;
+    }
+
+    body.dark-mode .sidenav .nav-link {
+        color: #cbd5e1 !important;
+    }
+
+        body.dark-mode .sidenav .nav-link:hover {
+            background: #334155 !important;
+            color: #f1f5f9 !important;
+        }
+
+        body.dark-mode .sidenav .nav-link.active {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            color: white !important;
+        }
+
+        body.dark-mode .sidenav .nav-link .icon {
+            background: rgba(79, 70, 229, 0.2) !important;
+        }
+
+    /* ✅ SIGN OUT - DARK MODE (Full Red, Clean) */
+    body.dark-mode .sidenav-footer {
+        background: transparent !important;
+        border-top-color: #334155 !important;
+    }
+
+    body.dark-mode .btn-sign-out-mobile {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4) !important;
+    }
+
+        body.dark-mode .btn-sign-out-mobile:hover {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5) !important;
+        }
+
+    body.dark-mode hr.horizontal.dark {
+        background-image: linear-gradient(90deg, #334155, transparent) !important;
+    }
+
+    /* Dark mode hamburger button */
+    body.dark-mode .navbar-toggler.d-lg-none {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    }
+
+        body.dark-mode .navbar-toggler.d-lg-none:hover {
+            background: rgba(30, 41, 59, 1) !important;
+        }
+
+    body.dark-mode .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23f1f5f9' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+    }
+}
+
+/* Desktop: sidebar selalu terlihat */
+@media (min-width: 992px) {
+    .navbar-toggler.d-lg-none {
+        display: none !important;
+    }
+
+    .sidenav-overlay {
+        display: none !important;
+    }
+
+    #iconSidenav {
+        display: none !important;
+    }
+
+    .sidenav-footer {
+        display: none !important;
+    }
+
+    .sidenav {
+        transform: translateX(0) !important;
+        position: fixed !important;
+    }
+
+    .main-content {
+        margin-left: 280px !important;
+    }
+}
+
+/* ========================================
+   ✅ DARK MODE TOGGLE - CLEAN
+   ======================================== */
+.dark-mode-toggle {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border: 2px solid rgba(255, 255, 255, 0.4) !important;
+    color: white !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    padding: 0 !important;
+    margin: 0 8px 0 0 !important;
+    position: relative !important;
+    z-index: 1070 !important;
+    pointer-events: auto !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+    .dark-mode-toggle:hover {
+        background: rgba(255, 255, 255, 0.35) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .dark-mode-toggle i {
+        font-size: 20px !important;
+        color: #ffffff !important;
+        transition: all 0.3s ease !important;
+        pointer-events: none !important;
+    }
+
+    .dark-mode-toggle:hover i {
+        transform: rotate(15deg) !important;
+    }
+
+body.dark-mode .dark-mode-toggle {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+    body.dark-mode .dark-mode-toggle i {
+        color: #fbbf24 !important;
+    }
+
+/* ========================================
+   ✅ SIGN OUT BUTTON (DESKTOP)
+   ======================================== */
+.btn-sign-out {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 18px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+    white-space: nowrap !important;
+    position: relative !important;
+    z-index: 1070 !important;
+    pointer-events: auto !important;
+}
+
+    .btn-sign-out:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4) !important;
+        color: white !important;
+    }
+
+    .btn-sign-out i {
+        font-size: 16px !important;
+        transition: transform 0.3s ease !important;
+    }
+
+    .btn-sign-out:hover i {
+        transform: translateX(3px) !important;
+    }
+
+@media (max-width: 576px) {
+    .btn-sign-out {
+        padding: 10px 12px !important;
+    }
+
+        .btn-sign-out span {
+            display: none !important;
+        }
+
+    .dark-mode-toggle {
+        width: 40px !important;
+        height: 40px !important;
+        margin-right: 4px !important;
+    }
+
+        .dark-mode-toggle i {
+            font-size: 18px !important;
+        }
 }
