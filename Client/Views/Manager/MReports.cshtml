@@ -50,8 +50,9 @@
         <div class="table-header">
             <h3 class="table-title"><i class="fas fa-list"></i> All Reports</h3>
             <div class="table-actions">
-                <button class="btn-export"><i class="fas fa-file-excel"></i> Excel</button>
-                <button class="btn-export"><i class="fas fa-file-pdf"></i> PDF</button>
+                <button class="btn-export" data-export="excel"><i class="fas fa-file-excel"></i> Excel</button>
+                <button class="btn-export" data-export="pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                <button class="btn-export" data-export="csv"><i class="fas fa-file-csv"></i> CSV</button>
             </div>
         </div>
         <div class="table-responsive">
@@ -116,7 +117,6 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Progress Report <span class="text-danger">*</span></label>
-                            <!-- ✅ VALUE SEKARANG BERUPA ANGKA (INT) -->
                             <select class="form-select" id="createProgressReport" required>
                                 <option value="">Select Progress</option>
                                 <option value="0">0% - Not Started</option>
@@ -194,7 +194,6 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Progress Report <span class="text-danger">*</span></label>
-                            <!-- ✅ VALUE SEKARANG BERUPA ANGKA (INT) -->
                             <select class="form-select" id="editProgressReport" required>
                                 <option value="">Select Progress</option>
                                 <option value="0">0% - Not Started</option>

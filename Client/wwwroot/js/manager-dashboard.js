@@ -1,10 +1,10 @@
 ﻿// ========================================
-// MANAGER DASHBOARD - FULL FIXED CHARTS
+// MANAGER DASHBOARD - SAME AS ADMIN & EMPLOYEE
 // ========================================
 
 if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
     window.MODAR_MANAGER_INITIALIZED = true;
-
+    
     const API_BASE = "https://localhost:7261/api";
     let projectsData = [];
     let reportsData = [];
@@ -28,11 +28,11 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
         darkModeToggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-
+            
             const isDark = body.classList.toggle('dark-mode');
             updateDarkModeIcon(darkModeIcon, isDark);
             localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
-
+            
             if (chartsInitialized) {
                 renderCharts();
             }
@@ -54,7 +54,7 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
     function initMobileSidebar() {
         const mobileMenuToggle = document.querySelector('.navbar-toggler.d-lg-none');
         const sidenav = document.getElementById('sidenav-main');
-
+        
         if (!mobileMenuToggle || !sidenav) return;
 
         let overlay = document.querySelector('.sidenav-overlay');
@@ -87,6 +87,53 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
         });
     }
 
+    // ===== SIGN OUT CONFIRMATION =====
+    function initSignOutConfirmation() {
+        const signOutButtons = document.querySelectorAll('.btn-sign-out-mobile, .btn-sign-out');
+        
+        signOutButtons.forEach(btn => {
+            // Remove existing event listeners by cloning
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const logoutUrl = this.getAttribute('href');
+                
+                swal({
+                    title: "Are you sure?",
+                    text: "You will be logged out of the system!",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: "Cancel",
+                            value: null,
+                            visible: true,
+                            className: "swal-cancel-btn",
+                            closeModal: true
+                        },
+                        confirm: {
+                            text: "Yes, sign out!",
+                            value: true,
+                            visible: true,
+                            className: "swal-danger-btn",
+                            closeModal: true
+                        }
+                    },
+                    dangerMode: true,
+                }).then((willLogout) => {
+                    if (willLogout) {
+                        window.location.href = logoutUrl;
+                    }
+                });
+            });
+        });
+        
+        console.log("✅ Sign out confirmation initialized");
+    }
+
     // ===== DASHBOARD INIT =====
     function initDashboard() {
         const dashboardElement = document.querySelector('.hero-section, .stats-grid, .charts-grid');
@@ -96,10 +143,10 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
             console.error("ApexCharts not loaded!");
             return;
         }
-
+        
         loadDashboardData().then(() => {
             updateStats();
-
+            
             if (!chartsInitialized) {
                 renderCharts();
                 chartsInitialized = true;
@@ -121,7 +168,7 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
                 console.log("✅ Reports loaded:", reportsData.length);
             }
         } catch (error) {
-            console.error("❌ Error loading data:", error);
+            console.error(" Error loading data:", error);
         }
     }
 
@@ -140,7 +187,7 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
 
         const successRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
         safeSetText('successRate', `${successRate}%`);
-
+        
         console.log("✅ Stats updated");
     }
 
@@ -163,7 +210,7 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
     // ===== RENDER ALL CHARTS =====
     function renderCharts() {
         console.log("📊 Rendering charts...");
-
+        
         // Destroy existing charts
         Object.values(chartInstances).forEach(chart => {
             if (chart) chart.destroy();
@@ -173,13 +220,11 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
         const reportChart = document.getElementById('reportStatusChart');
         const projectChart = document.getElementById('projectProgressChart');
         const monthlyChart = document.getElementById('monthlyActivityChart');
-        const taskChart = document.getElementById('taskOverviewChart');
-
+        
         if (reportChart) renderReportStatusChart();
         if (projectChart) renderProjectProgressChart();
         if (monthlyChart) renderMonthlyActivityChart();
-        if (taskChart) renderTaskOverviewChart();
-
+        
         console.log("✅ All charts rendered");
     }
 
@@ -192,20 +237,20 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
 
         const options = {
             series: [pending, onProgress, done],
-            chart: {
-                type: 'donut',
-                height: 320,
+            chart: { 
+                type: 'donut', 
+                height: 320, 
                 fontFamily: 'Inter, sans-serif',
                 background: 'transparent'
             },
             labels: ['Pending', 'On Progress', 'Done'],
             colors: ['#ef4444', '#f59e0b', '#10b981'],
-            legend: {
-                position: 'bottom',
-                fontSize: '13px',
-                fontFamily: 'Inter, sans-serif',
-                fontWeight: 600,
-                labels: { colors: colors.label }
+            legend: { 
+                position: 'bottom', 
+                fontSize: '13px', 
+                fontFamily: 'Inter, sans-serif', 
+                fontWeight: 600, 
+                labels: { colors: colors.label } 
             },
             plotOptions: {
                 pie: {
@@ -223,13 +268,13 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
                                 fontWeight: 800,
                                 color: colors.text
                             },
-                            total: {
-                                show: true,
-                                label: 'Total',
-                                fontSize: '13px',
-                                fontWeight: 600,
-                                color: colors.label,
-                                formatter: () => pending + onProgress + done
+                            total: { 
+                                show: true, 
+                                label: 'Total', 
+                                fontSize: '13px', 
+                                fontWeight: 600, 
+                                color: colors.label, 
+                                formatter: () => pending + onProgress + done 
                             }
                         }
                     }
@@ -253,26 +298,26 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
         const colors = getChartColors();
 
         const options = {
-            series: [{
-                name: 'Projects',
-                data: [pending, onProgress, done]
+            series: [{ 
+                name: 'Projects', 
+                data: [pending, onProgress, done] 
             }],
-            chart: {
-                type: 'bar',
-                height: 320,
-                fontFamily: 'Inter, sans-serif',
+            chart: { 
+                type: 'bar', 
+                height: 320, 
+                fontFamily: 'Inter, sans-serif', 
                 toolbar: { show: false },
                 background: 'transparent'
             },
-            plotOptions: {
-                bar: {
-                    borderRadius: 12,
-                    columnWidth: '50%',
-                    distributed: true
-                }
+            plotOptions: { 
+                bar: { 
+                    borderRadius: 12, 
+                    columnWidth: '50%', 
+                    distributed: true 
+                } 
             },
             colors: ['#ef4444', '#f59e0b', '#10b981'],
-            xaxis: {
+            xaxis: { 
                 categories: ['Pending', 'On Progress', 'Done'],
                 labels: {
                     style: {
@@ -305,10 +350,8 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
     function renderMonthlyActivityChart() {
         const colors = getChartColors();
 
-        // Generate data dari projects dan reports
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
         const projectData = months.map((_, index) => {
-            // Count projects created in each month (dummy data jika tidak ada date)
             return projectsData.filter(p => {
                 if (!p.createdDate) return index < 3;
                 const month = new Date(p.createdDate).getMonth();
@@ -317,7 +360,6 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
         });
 
         const reportData = months.map((_, index) => {
-            // Count reports submitted in each month
             return reportsData.filter(r => {
                 if (!r.date) return index < 3;
                 const month = new Date(r.date).getMonth();
@@ -327,26 +369,26 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
 
         const options = {
             series: [
-                { name: 'Projects', data: projectData },
+                { name: 'Projects', data: projectData }, 
                 { name: 'Reports', data: reportData }
             ],
-            chart: {
-                type: 'area',
-                height: 320,
-                fontFamily: 'Inter, sans-serif',
+            chart: { 
+                type: 'area', 
+                height: 320, 
+                fontFamily: 'Inter, sans-serif', 
                 toolbar: { show: false },
                 background: 'transparent'
             },
             colors: ['#4f46e5', '#f59e0b'],
             stroke: { curve: 'smooth', width: 3 },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    opacityFrom: 0.4,
-                    opacityTo: 0.1
-                }
+            fill: { 
+                type: 'gradient', 
+                gradient: { 
+                    opacityFrom: 0.4, 
+                    opacityTo: 0.1 
+                } 
             },
-            xaxis: {
+            xaxis: { 
                 categories: months,
                 labels: {
                     style: {
@@ -366,10 +408,10 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
                 }
             },
             grid: { borderColor: colors.grid, strokeDashArray: 4 },
-            legend: {
+            legend: { 
                 position: 'top',
                 horizontalAlign: 'right',
-                labels: { colors: colors.label }
+                labels: { colors: colors.label } 
             },
             tooltip: { theme: colors.tooltip }
         };
@@ -379,75 +421,11 @@ if (typeof window.MODAR_MANAGER_INITIALIZED === 'undefined') {
         chartInstances.monthlyActivity = chart;
     }
 
-    // ===== CHART 4: TASK OVERVIEW (RADIAL BAR) =====
-    function renderTaskOverviewChart() {
-        const colors = getChartColors();
-
-        // Hitung data dari projects dan reports
-        const totalProjects = projectsData.length;
-        const totalReports = reportsData.length;
-        const completedProjects = projectsData.filter(p => p.status === 2).length;
-        const pendingReports = reportsData.filter(r => r.status === 0).length;
-
-        // Hitung persentase
-        const projectCompletion = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
-        const reportPending = totalReports > 0 ? Math.round((pendingReports / totalReports) * 100) : 0;
-        const overallProgress = totalProjects + totalReports > 0
-            ? Math.round(((completedProjects + (totalReports - pendingReports)) / (totalProjects + totalReports)) * 100)
-            : 0;
-
-        const options = {
-            series: [projectCompletion, 100 - projectCompletion, reportPending, 100 - reportPending],
-            chart: {
-                type: 'radialBar',
-                height: 320,
-                fontFamily: 'Inter, sans-serif',
-                background: 'transparent'
-            },
-            plotOptions: {
-                radialBar: {
-                    dataLabels: {
-                        name: {
-                            fontSize: '13px',
-                            fontWeight: 600,
-                            color: colors.label
-                        },
-                        value: {
-                            fontSize: '16px',
-                            fontWeight: 800,
-                            color: colors.text
-                        },
-                        total: {
-                            show: true,
-                            label: 'Overall',
-                            fontSize: '13px',
-                            fontWeight: 600,
-                            color: colors.label,
-                            formatter: () => `${overallProgress}%`
-                        }
-                    },
-                    track: {
-                        background: colors.grid,
-                        strokeWidth: '97%',
-                        margin: 5
-                    }
-                }
-            },
-            labels: ['Projects Done', 'Projects Pending', 'Reports Done', 'Reports Pending'],
-            colors: ['#10b981', '#ef4444', '#3b82f6', '#f59e0b'],
-            stroke: { lineCap: 'round' },
-            tooltip: { theme: colors.tooltip }
-        };
-
-        const chart = new ApexCharts(document.querySelector("#taskOverviewChart"), options);
-        chart.render();
-        chartInstances.taskOverview = chart;
-    }
-
     // ===== INITIALIZATION =====
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         initDarkMode();
         initMobileSidebar();
+        initSignOutConfirmation(); // ✅ Initialize sign out confirmation
         initDashboard();
     });
 }

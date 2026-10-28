@@ -1,264 +1,431 @@
 ﻿// ========================================
-// EMPLOYEE DASHBOARD - FULLY OPTIMIZED
+// EMPLOYEE DASHBOARD - SAME AS ADMIN & MANAGER
 // ========================================
 
-const API_BASE = "https://localhost:7261/api";
-let reportsData = [];
-let projectsData = [];
+if (typeof window.MODAR_EMPLOYEE_INITIALIZED === 'undefined') {
+    window.MODAR_EMPLOYEE_INITIALIZED = true;
+    
+    const API_BASE = "https://localhost:7261/api";
+    let projectsData = [];
+    let reportsData = [];
+    let chartsInitialized = false;
+    let chartInstances = {};
 
-document.addEventListener('DOMContentLoaded', function () {
-    console.log("🚀 Employee Dashboard initialized");
-    loadData();
-});
+    // ===== DARK MODE =====
+    function initDarkMode() {
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        const body = document.body;
 
-async function loadData() {
-    await loadProjects();
-    await loadReports();
-    updateStats();
-    renderCharts();
-    renderRecentReports();
-}
+        if (!darkModeToggle || !darkModeIcon) return;
 
-async function loadProjects() {
-    try {
-        const response = await fetch(`${API_BASE}/ProjectLists`);
-        if (response.ok) {
-            projectsData = await response.json();
-            console.log("✅ Projects loaded:", projectsData.length);
+        const savedDarkMode = localStorage.getItem('darkMode');
+        if (savedDarkMode === 'enabled') {
+            body.classList.add('dark-mode');
+            updateDarkModeIcon(darkModeIcon, true);
         }
-    } catch (error) {
-        console.error("❌ Error loading projects:", error);
-    }
-}
 
-async function loadReports() {
-    try {
-        const response = await fetch(`${API_BASE}/Reports`);
-        if (response.ok) {
-            reportsData = await response.json();
-            console.log("✅ Reports loaded:", reportsData.length);
-        }
-    } catch (error) {
-        console.error("❌ Error loading reports:", error);
-    }
-}
-
-function updateStats() {
-    const totalProjects = projectsData.length;
-    const totalReports = reportsData.length;
-    const completedProjects = projectsData.filter(p => p.status === 2).length;
-    const pendingReports = reportsData.filter(r => r.status === 0).length;
-    
-    document.getElementById('totalProjects').textContent = totalProjects;
-    document.getElementById('totalReports').textContent = totalReports;
-    document.getElementById('numProjects').textContent = totalProjects;
-    document.getElementById('numReports').textContent = totalReports;
-    document.getElementById('completedProjects').textContent = completedProjects;
-    document.getElementById('pendingReports').textContent = pendingReports;
-    
-    const projectTrend = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
-    const reportTrend = totalReports > 0 ? Math.round(((totalReports - pendingReports) / totalReports) * 100) : 0;
-    const successRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
-    
-    document.getElementById('projectTrend').textContent = projectTrend + '%';
-    document.getElementById('reportTrend').textContent = reportTrend + '%';
-    document.getElementById('successRate').textContent = successRate + '%';
-}
-
-function renderCharts() {
-    renderReportStatusChart();
-    renderProjectProgressChart();
-    renderMonthlyActivityChart();
-}
-
-function renderReportStatusChart() {
-    const ctx = document.getElementById('reportStatusChart');
-    if (!ctx) return;
-    
-    const pending = reportsData.filter(r => r.status === 0).length;
-    const onProgress = reportsData.filter(r => r.status === 1).length;
-    const done = reportsData.filter(r => r.status === 2).length;
-    
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Pending', 'On Progress', 'Done'],
-            datasets: [{
-                data: [pending, onProgress, done],
-                backgroundColor: ['#f59e0b', '#3b82f6', '#10b981'],
-                borderWidth: 0,
-                hoverOffset: 10
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        usePointStyle: true,
-                        font: { size: 12, weight: '600' },
-                        color: document.body.classList.contains('dark-mode') ? '#f1f5f9' : '#0f172a'
-                    }
-                }
-            },
-            cutout: '60%'
-        }
-    });
-}
-
-function renderProjectProgressChart() {
-    const ctx = document.getElementById('projectProgressChart');
-    if (!ctx) return;
-    
-    const notStarted = projectsData.filter(p => p.status === 0).length;
-    const onProgress = projectsData.filter(p => p.status === 1).length;
-    const done = projectsData.filter(p => p.status === 2).length;
-    
-    const isDark = document.body.classList.contains('dark-mode');
-    
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Not Started', 'On Progress', 'Done'],
-            datasets: [{
-                label: 'Projects',
-                data: [notStarted, onProgress, done],
-                backgroundColor: ['#94a3b8', '#3b82f6', '#10b981'],
-                borderRadius: 8,
-                barThickness: 40
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1, font: { size: 12 }, color: isDark ? '#94a3b8' : '#64748b' },
-                    grid: { color: isDark ? '#334155' : '#e2e8f0' }
-                },
-                x: {
-                    ticks: { font: { size: 12, weight: '600' }, color: isDark ? '#94a3b8' : '#64748b' },
-                    grid: { display: false }
-                }
+        darkModeToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const isDark = body.classList.toggle('dark-mode');
+            updateDarkModeIcon(darkModeIcon, isDark);
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+            
+            if (chartsInitialized) {
+                renderCharts();
             }
-        }
-    });
-}
-
-function renderMonthlyActivityChart() {
-    const ctx = document.getElementById('monthlyActivityChart');
-    if (!ctx) return;
-    
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-    const projectsData_arr = [2, 3, 4, 3, 5, 4];
-    const reportsData_arr = [3, 5, 4, 6, 8, 7];
-    
-    const isDark = document.body.classList.contains('dark-mode');
-    
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: months,
-            datasets: [
-                {
-                    label: 'Projects',
-                    data: projectsData_arr,
-                    borderColor: '#4f46e5',
-                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                },
-                {
-                    label: 'Reports',
-                    data: reportsData_arr,
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        font: { size: 12, weight: '600' },
-                        color: isDark ? '#f1f5f9' : '#0f172a'
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { font: { size: 12 }, color: isDark ? '#94a3b8' : '#64748b' },
-                    grid: { color: isDark ? '#334155' : '#e2e8f0' }
-                },
-                x: {
-                    ticks: { font: { size: 12, weight: '600' }, color: isDark ? '#94a3b8' : '#64748b' },
-                    grid: { display: false }
-                }
-            }
-        }
-    });
-}
-
-function renderRecentReports() {
-    const tbody = document.getElementById('recentReportsTable');
-    if (!tbody) return;
-    
-    if (reportsData.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="6" class="loading-cell">
-                    <i class="fas fa-inbox" style="font-size: 48px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
-                    <p>No reports found</p>
-                </td>
-            </tr>`;
-        return;
+        });
     }
-    
-    const recentReports = reportsData.slice(0, 5);
-    
-    tbody.innerHTML = recentReports.map((report, index) => {
-        const statusClass = report.status === 1 ? 'on-progress' : (report.status === 2 ? 'done' : 'pending');
-        const statusText = report.status === 1 ? 'On Progress' : (report.status === 2 ? 'Done' : 'Pending');
-        const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
-        const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
+
+    function updateDarkModeIcon(icon, isDark) {
+        if (!icon) return;
+        if (isDark) {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        } else {
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+    }
+
+    // ===== MOBILE SIDEBAR =====
+    function initMobileSidebar() {
+        const mobileMenuToggle = document.querySelector('.navbar-toggler.d-lg-none');
+        const sidenav = document.getElementById('sidenav-main');
         
-        return `
-            <tr>
-                <td>${index + 1}</td>
-                <td><strong>${report.title || 'Untitled'}</strong></td>
-                <td>${projectName}</td>
-                <td>${dateStr}</td>
-                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                <td>${report.progressReport || '-'}</td>
-            </tr>`;
-    }).join('');
-}
+        if (!mobileMenuToggle || !sidenav) return;
 
-function viewAllReports() {
-    window.location.href = '/Employees/Reports';
-}
+        let overlay = document.querySelector('.sidenav-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'sidenav-overlay';
+            document.body.appendChild(overlay);
+        }
 
-function signOut() {
-    if (confirm('Are you sure you want to sign out?')) {
-        window.location.href = '/Login';
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            sidenav.classList.toggle('show');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', function() {
+            sidenav.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        const navLinks = document.querySelectorAll('.sidenav .nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 992) {
+                    sidenav.classList.remove('show');
+                    overlay.classList.remove('show');
+                }
+            });
+        });
     }
+
+    // ===== SIGN OUT CONFIRMATION =====
+    function initSignOutConfirmation() {
+        const signOutButtons = document.querySelectorAll('.btn-sign-out-mobile, .btn-sign-out');
+        
+        signOutButtons.forEach(btn => {
+            // Remove existing event listeners by cloning
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const logoutUrl = this.getAttribute('href');
+                
+                swal({
+                    title: "Are you sure?",
+                    text: "You will be logged out of the system!",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: "Cancel",
+                            value: null,
+                            visible: true,
+                            className: "swal-cancel-btn",
+                            closeModal: true
+                        },
+                        confirm: {
+                            text: "Yes, sign out!",
+                            value: true,
+                            visible: true,
+                            className: "swal-danger-btn",
+                            closeModal: true
+                        }
+                    },
+                    dangerMode: true,
+                }).then((willLogout) => {
+                    if (willLogout) {
+                        window.location.href = logoutUrl;
+                    }
+                });
+            });
+        });
+        
+        console.log("✅ Sign out confirmation initialized");
+    }
+
+    // ===== DASHBOARD INIT =====
+    function initDashboard() {
+        const dashboardElement = document.querySelector('.hero-section, .stats-grid, .charts-grid');
+        if (!dashboardElement) return;
+
+        if (typeof ApexCharts === 'undefined') {
+            console.error("ApexCharts not loaded!");
+            return;
+        }
+        
+        loadDashboardData().then(() => {
+            updateStats();
+            
+            if (!chartsInitialized) {
+                renderCharts();
+                chartsInitialized = true;
+            }
+        });
+    }
+
+    async function loadDashboardData() {
+        try {
+            const projectsRes = await fetch(`${API_BASE}/ProjectLists`);
+            if (projectsRes.ok) {
+                projectsData = await projectsRes.json();
+                console.log("✅ Projects loaded:", projectsData.length);
+            }
+
+            const reportsRes = await fetch(`${API_BASE}/Reports`);
+            if (reportsRes.ok) {
+                reportsData = await reportsRes.json();
+                console.log("✅ Reports loaded:", reportsData.length);
+            }
+        } catch (error) {
+            console.error(" Error loading data:", error);
+        }
+    }
+
+    function updateStats() {
+        const totalProjects = projectsData.length;
+        const totalReports = reportsData.length;
+        const completedProjects = projectsData.filter(p => p.status === 2).length;
+        const pendingReports = reportsData.filter(r => r.status === 0).length;
+
+        safeSetText('totalProjects', totalProjects);
+        safeSetText('totalReports', totalReports);
+        safeSetText('statProjects', totalProjects);
+        safeSetText('statReports', totalReports);
+        safeSetText('statCompleted', completedProjects);
+        safeSetText('statPending', pendingReports);
+
+        const successRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
+        safeSetText('successRate', `${successRate}%`);
+        
+        console.log("✅ Stats updated");
+    }
+
+    function safeSetText(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    function getChartColors() {
+        const isDark = document.body.classList.contains('dark-mode');
+        return {
+            text: isDark ? '#f1f5f9' : '#0f172a',
+            label: isDark ? '#94a3b8' : '#64748b',
+            grid: isDark ? '#334155' : '#e2e8f0',
+            tooltip: isDark ? 'dark' : 'light',
+            cardBg: isDark ? '#1e293b' : '#ffffff'
+        };
+    }
+
+    // ===== RENDER ALL CHARTS =====
+    function renderCharts() {
+        console.log("📊 Rendering charts...");
+        
+        // Destroy existing charts
+        Object.values(chartInstances).forEach(chart => {
+            if (chart) chart.destroy();
+        });
+        chartInstances = {};
+
+        const reportChart = document.getElementById('reportStatusChart');
+        const projectChart = document.getElementById('projectProgressChart');
+        const monthlyChart = document.getElementById('monthlyActivityChart');
+        
+        if (reportChart) renderReportStatusChart();
+        if (projectChart) renderProjectProgressChart();
+        if (monthlyChart) renderMonthlyActivityChart();
+        
+        console.log("✅ All charts rendered");
+    }
+
+    // ===== CHART 1: REPORT STATUS (DONUT) =====
+    function renderReportStatusChart() {
+        const pending = reportsData.filter(r => r.status === 0).length;
+        const onProgress = reportsData.filter(r => r.status === 1).length;
+        const done = reportsData.filter(r => r.status === 2).length;
+        const colors = getChartColors();
+
+        const options = {
+            series: [pending, onProgress, done],
+            chart: { 
+                type: 'donut', 
+                height: 320, 
+                fontFamily: 'Inter, sans-serif',
+                background: 'transparent'
+            },
+            labels: ['Pending', 'On Progress', 'Done'],
+            colors: ['#ef4444', '#f59e0b', '#10b981'],
+            legend: { 
+                position: 'bottom', 
+                fontSize: '13px', 
+                fontFamily: 'Inter, sans-serif', 
+                fontWeight: 600, 
+                labels: { colors: colors.label } 
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '65%',
+                        labels: {
+                            show: true,
+                            name: {
+                                fontSize: '14px',
+                                fontWeight: 600,
+                                color: colors.label
+                            },
+                            value: {
+                                fontSize: '28px',
+                                fontWeight: 800,
+                                color: colors.text
+                            },
+                            total: { 
+                                show: true, 
+                                label: 'Total', 
+                                fontSize: '13px', 
+                                fontWeight: 600, 
+                                color: colors.label, 
+                                formatter: () => pending + onProgress + done 
+                            }
+                        }
+                    }
+                }
+            },
+            dataLabels: { enabled: false },
+            stroke: { width: 2, colors: ['#ffffff'] },
+            tooltip: { theme: colors.tooltip }
+        };
+
+        const chart = new ApexCharts(document.querySelector("#reportStatusChart"), options);
+        chart.render();
+        chartInstances.reportStatus = chart;
+    }
+
+    // ===== CHART 2: PROJECT PROGRESS (BAR) =====
+    function renderProjectProgressChart() {
+        const pending = projectsData.filter(p => p.status === 0).length;
+        const onProgress = projectsData.filter(p => p.status === 1).length;
+        const done = projectsData.filter(p => p.status === 2).length;
+        const colors = getChartColors();
+
+        const options = {
+            series: [{ 
+                name: 'Projects', 
+                data: [pending, onProgress, done] 
+            }],
+            chart: { 
+                type: 'bar', 
+                height: 320, 
+                fontFamily: 'Inter, sans-serif', 
+                toolbar: { show: false },
+                background: 'transparent'
+            },
+            plotOptions: { 
+                bar: { 
+                    borderRadius: 12, 
+                    columnWidth: '50%', 
+                    distributed: true 
+                } 
+            },
+            colors: ['#ef4444', '#f59e0b', '#10b981'],
+            xaxis: { 
+                categories: ['Pending', 'On Progress', 'Done'],
+                labels: {
+                    style: {
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        colors: colors.label
+                    }
+                }
+            },
+            yaxis: {
+                labels: {
+                    style: {
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        colors: colors.label
+                    }
+                }
+            },
+            dataLabels: { enabled: false },
+            grid: { borderColor: colors.grid, strokeDashArray: 4 },
+            tooltip: { theme: colors.tooltip }
+        };
+
+        const chart = new ApexCharts(document.querySelector("#projectProgressChart"), options);
+        chart.render();
+        chartInstances.projectProgress = chart;
+    }
+
+    // ===== CHART 3: MONTHLY ACTIVITY (AREA) =====
+    function renderMonthlyActivityChart() {
+        const colors = getChartColors();
+
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        const projectData = months.map((_, index) => {
+            return projectsData.filter(p => {
+                if (!p.createdDate) return index < 3;
+                const month = new Date(p.createdDate).getMonth();
+                return month === index;
+            }).length || Math.floor(Math.random() * 10) + 5;
+        });
+
+        const reportData = months.map((_, index) => {
+            return reportsData.filter(r => {
+                if (!r.date) return index < 3;
+                const month = new Date(r.date).getMonth();
+                return month === index;
+            }).length || Math.floor(Math.random() * 8) + 3;
+        });
+
+        const options = {
+            series: [
+                { name: 'Projects', data: projectData }, 
+                { name: 'Reports', data: reportData }
+            ],
+            chart: { 
+                type: 'area', 
+                height: 320, 
+                fontFamily: 'Inter, sans-serif', 
+                toolbar: { show: false },
+                background: 'transparent'
+            },
+            colors: ['#4f46e5', '#f59e0b'],
+            stroke: { curve: 'smooth', width: 3 },
+            fill: { 
+                type: 'gradient', 
+                gradient: { 
+                    opacityFrom: 0.4, 
+                    opacityTo: 0.1 
+                } 
+            },
+            xaxis: { 
+                categories: months,
+                labels: {
+                    style: {
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        colors: colors.label
+                    }
+                }
+            },
+            yaxis: {
+                labels: {
+                    style: {
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        colors: colors.label
+                    }
+                }
+            },
+            grid: { borderColor: colors.grid, strokeDashArray: 4 },
+            legend: { 
+                position: 'top',
+                horizontalAlign: 'right',
+                labels: { colors: colors.label } 
+            },
+            tooltip: { theme: colors.tooltip }
+        };
+
+        const chart = new ApexCharts(document.querySelector("#monthlyActivityChart"), options);
+        chart.render();
+        chartInstances.monthlyActivity = chart;
+    }
+
+    // ===== INITIALIZATION =====
+    document.addEventListener('DOMContentLoaded', function () {
+        initDarkMode();
+        initMobileSidebar();
+        initSignOutConfirmation(); // ✅ Initialize sign out confirmation
+        initDashboard();
+    });
 }

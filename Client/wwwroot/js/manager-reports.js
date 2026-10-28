@@ -1,5 +1,5 @@
 ﻿// ========================================
-// MANAGER REPORTS - FULLY OPTIMIZED (INT PROGRESS)
+// MANAGER REPORTS - FULLY FIXED & OPTIMIZED
 // ========================================
 
 const API_BASE = "https://localhost:7261/api";
@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
     loadData();
     initCreateButton();
     initSearchFilter();
+    initActionButtons();
+    initExportButtons();
+    initSignOutConfirmation();
 });
 
 function initCreateButton() {
@@ -20,7 +23,6 @@ function initCreateButton() {
             document.getElementById('createReportForm').reset();
             populateProjectDropdown('createProjectId');
 
-            // Reset counters (hanya untuk title & description)
             updateCounter('createTitleCounter', 0, 100);
             updateCounter('createDescriptionCounter', 0, 500);
 
@@ -42,6 +44,94 @@ function initSearchFilter() {
     if (filterSelect) filterSelect.addEventListener('change', renderReportsTable);
 }
 
+// ===== INIT ACTION BUTTONS (VIEW, EDIT, DELETE) =====
+function initActionButtons() {
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('.btn-action');
+        if (!target) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const reportId = target.getAttribute('data-id');
+        
+        if (!reportId) {
+            console.error("❌ Report ID not found!");
+            swal("Error", "Report ID is missing!", "error");
+            return;
+        }
+
+        if (target.classList.contains('btn-view')) {
+            viewReport(reportId);
+        } else if (target.classList.contains('btn-edit')) {
+            editReport(reportId);
+        } else if (target.classList.contains('btn-delete')) {
+            deleteReport(reportId);
+        }
+    });
+}
+
+// ===== INIT EXPORT BUTTONS =====
+function initExportButtons() {
+    const btnExcel = document.querySelector('.btn-export[data-export="excel"]');
+    const btnPDF = document.querySelector('.btn-export[data-export="pdf"]');
+    const btnCSV = document.querySelector('.btn-export[data-export="csv"]');
+
+    if (btnExcel) {
+        btnExcel.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToExcel();
+        });
+    }
+
+    if (btnPDF) {
+        btnPDF.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToPDF();
+        });
+    }
+
+    if (btnCSV) {
+        btnCSV.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToCSV();
+        });
+    }
+}
+
+// ===== SIGN OUT CONFIRMATION =====
+function initSignOutConfirmation() {
+    const signOutButtons = document.querySelectorAll('.btn-sign-out-mobile, .btn-sign-out');
+    
+    signOutButtons.forEach(btn => {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const logoutUrl = this.getAttribute('href');
+            
+            swal({
+                title: "Are you sure?",
+                text: "You will be logged out of the system!",
+                icon: "warning",
+                buttons: {
+                    cancel: { text: "Cancel", value: null, visible: true, className: "swal-cancel-btn", closeModal: true },
+                    confirm: { text: "Yes, sign out!", value: true, visible: true, className: "swal-danger-btn", closeModal: true }
+                },
+                dangerMode: true,
+            }).then((willLogout) => {
+                if (willLogout) {
+                    window.location.href = logoutUrl;
+                }
+            });
+        });
+    });
+    console.log("✅ Sign out confirmation initialized");
+}
+
 async function loadData() {
     await loadProjects();
     await loadReports();
@@ -52,6 +142,7 @@ async function loadProjects() {
         const response = await fetch(`${API_BASE}/ProjectLists`);
         if (response.ok) {
             projectsData = await response.json();
+            console.log("✅ Projects loaded:", projectsData.length);
         }
     } catch (error) { console.error("❌ Error loading projects:", error); }
 }
@@ -61,6 +152,7 @@ async function loadReports() {
         const response = await fetch(`${API_BASE}/Reports`);
         if (response.ok) {
             reportsData = await response.json();
+            console.log("✅ Reports loaded:", reportsData.length);
             renderReportsTable();
             updateStats();
         }
@@ -128,7 +220,10 @@ function getFilteredReports() {
 
 function renderReportsTable() {
     const tbody = document.getElementById('reportsTableBody');
-    if (!tbody) return;
+    if (!tbody) {
+        console.error("❌ reportsTableBody not found!");
+        return;
+    }
 
     const filteredReports = getFilteredReports();
     if (filteredReports.length === 0) {
@@ -143,12 +238,10 @@ function renderReportsTable() {
         const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
         const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
         const doneByName = report.doneByName || 'N/A';
-
-        // ✅ Tambahkan tanda % untuk tampilan di tabel agar user friendly
-        const progressDisplay = report.progressReport ? `${report.progressReport}%` : '-';
+        const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : '-';
 
         return `
-            <tr data-report-id="${reportId}">
+            <tr>
                 <td>${index + 1}</td>
                 <td><strong>${report.title || 'Untitled'}</strong></td>
                 <td>${projectName}</td>
@@ -158,49 +251,113 @@ function renderReportsTable() {
                 <td>${doneByName}</td>
                 <td>
                     <div class="action-buttons">
-                        <button type="button" class="btn-action btn-view" title="View"><i class="fas fa-eye"></i></button>
-                        <button type="button" class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button type="button" class="btn-action btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button type="button" class="btn-action btn-view" data-id="${reportId}" title="View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button type="button" class="btn-action btn-edit" data-id="${reportId}" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn-action btn-delete" data-id="${reportId}" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </td>
             </tr>`;
     }).join('');
-
-    setTimeout(() => { setupReportActionButtons(); }, 100);
 }
 
-function setupReportActionButtons() {
-    document.querySelectorAll('.btn-view').forEach(btn => {
-        btn.onclick = function (e) {
-            e.preventDefault(); e.stopPropagation();
-            const row = this.closest('tr');
-            const reportId = row ? row.getAttribute('data-report-id') : null;
-            if (reportId) viewReport(reportId);
-        };
+// ========================================
+// EXPORT FUNCTIONS
+// ========================================
+function exportToExcel() {
+    if (reportsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+    let csv = 'No,Title,Project,Date,Progress,Status,Done By,Description\n';
+    reportsData.forEach((report, index) => {
+        const statusText = report.status === 1 ? 'On Progress' : (report.status === 2 ? 'Done' : 'Pending');
+        const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
+        const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
+        const doneByName = report.doneByName || 'N/A';
+        const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : '-';
+        csv += `${index + 1},"${report.title}","${projectName}","${dateStr}","${progressDisplay}","${statusText}","${doneByName}","${report.description || ''}"\n`;
     });
-    document.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.onclick = function (e) {
-            e.preventDefault(); e.stopPropagation();
-            const row = this.closest('tr');
-            const reportId = row ? row.getAttribute('data-report-id') : null;
-            if (reportId) editReport(reportId);
-        };
-    });
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.onclick = function (e) {
-            e.preventDefault(); e.stopPropagation();
-            const row = this.closest('tr');
-            const reportId = row ? row.getAttribute('data-report-id') : null;
-            if (reportId) deleteReport(reportId);
-        };
-    });
+    downloadFile(csv, 'reports.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    swal("Success", "Data exported to Excel!", "success");
 }
 
+function exportToPDF() {
+    if (reportsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+    const printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>Reports Report</title>');
+    printWindow.document.write('<style>body{font-family:Arial,sans-serif;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}th{background-color:#4f46e5;color:white;}</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<h1 style="color:#4f46e5;">Reports Report</h1>');
+    printWindow.document.write('<table><tr><th>No</th><th>Title</th><th>Project</th><th>Date</th><th>Progress</th><th>Status</th><th>Done By</th></tr>');
+    
+    reportsData.forEach((report, index) => {
+        const statusText = report.status === 1 ? 'On Progress' : (report.status === 2 ? 'Done' : 'Pending');
+        const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
+        const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
+        const doneByName = report.doneByName || 'N/A';
+        const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : '-';
+        printWindow.document.write(`<tr>
+            <td>${index + 1}</td>
+            <td>${report.title}</td>
+            <td>${projectName}</td>
+            <td>${dateStr}</td>
+            <td>${progressDisplay}</td>
+            <td>${statusText}</td>
+            <td>${doneByName}</td>
+        </tr>`);
+    });
+    printWindow.document.write('</table></body></html>');
+    printWindow.document.close();
+    printWindow.print();
+    swal("Success", "PDF export initiated!", "success");
+}
+
+function exportToCSV() {
+    if (reportsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+    let csv = 'No,Title,Project,Date,Progress,Status,Done By,Description\n';
+    reportsData.forEach((report, index) => {
+        const statusText = report.status === 1 ? 'On Progress' : (report.status === 2 ? 'Done' : 'Pending');
+        const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
+        const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
+        const doneByName = report.doneByName || 'N/A';
+        const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : '-';
+        csv += `${index + 1},"${report.title}","${projectName}","${dateStr}","${progressDisplay}","${statusText}","${doneByName}","${report.description || ''}"\n`;
+    });
+    downloadFile(csv, 'reports.csv', 'text/csv');
+    swal("Success", "Data exported to CSV!", "success");
+}
+
+function downloadFile(content, filename, contentType) {
+    const blob = new Blob([content], { type: contentType });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+// ========================================
+// CRUD FUNCTIONS
+// ========================================
 async function submitCreateReport() {
     const title = document.getElementById('createTitle').value.trim();
     const description = document.getElementById('createDescription').value.trim();
     const date = document.getElementById('createDate').value;
-    // ✅ Ambil value dari dropdown (sudah berupa string angka, misal "75")
     const progressReportStr = document.getElementById('createProgressReport').value;
     const projectId = document.getElementById('createProjectId').value;
     const status = document.getElementById('createStatus').value;
@@ -223,7 +380,7 @@ async function submitCreateReport() {
         title: title,
         description: description,
         date: date,
-        progressReport: parseInt(progressReportStr), // ✅ DIKIRIM SEBAGAI INT
+        progressReport: parseInt(progressReportStr),
         projectId: projectId,
         status: parseInt(status),
         doneBy: doneBy
@@ -252,6 +409,11 @@ async function submitCreateReport() {
 }
 
 function editReport(id) {
+    if (!id) {
+        swal("Error", "Report ID is missing!", "error");
+        return;
+    }
+
     const report = reportsData.find(r => String(r.id) === String(id));
     if (!report) {
         swal("Error", "Report not found", "error");
@@ -264,10 +426,7 @@ function editReport(id) {
     document.getElementById('editTitle').value = report.title || '';
     document.getElementById('editDescription').value = report.description || '';
     document.getElementById('editDate').value = report.date ? new Date(report.date).toISOString().split('T')[0] : '';
-
-    // ✅ Auto-select dropdown berdasarkan nilai INT dari database
     document.getElementById('editProgressReport').value = report.progressReport !== null && report.progressReport !== undefined ? String(report.progressReport) : '';
-
     document.getElementById('editProjectId').value = report.projectId || '';
     document.getElementById('editStatus').value = report.status !== undefined ? String(report.status) : '0';
 
@@ -307,7 +466,7 @@ async function submitEditReport() {
         title: title,
         description: description,
         date: date,
-        progressReport: parseInt(progressReportStr), // ✅ DIKIRIM SEBAGAI INT
+        progressReport: parseInt(progressReportStr),
         projectId: projectId,
         status: parseInt(status),
         doneBy: doneBy
@@ -340,8 +499,16 @@ async function submitEditReport() {
 }
 
 async function deleteReport(id) {
+    if (!id) {
+        swal("Error", "Report ID is missing!", "error");
+        return;
+    }
+
     const report = reportsData.find(r => String(r.id) === String(id));
-    if (!report) return;
+    if (!report) {
+        swal("Error", "Report not found", "error");
+        return;
+    }
 
     swal({
         title: "Are you sure?",
@@ -364,6 +531,7 @@ async function deleteReport(id) {
                     swal("Error", `Failed to delete: ${errorText}`, "error");
                 }
             } catch (error) {
+                console.error("❌ Error deleting report:", error);
                 swal("Error", "Failed to delete report.", "error");
             }
         }
@@ -371,6 +539,11 @@ async function deleteReport(id) {
 }
 
 function viewReport(id) {
+    if (!id) {
+        swal("Error", "Report ID is missing!", "error");
+        return;
+    }
+
     const report = reportsData.find(r => String(r.id) === String(id));
     if (!report) {
         swal("Error", "Report not found", "error");
@@ -381,8 +554,7 @@ function viewReport(id) {
     const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
     const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
     const doneByName = report.doneByName || 'N/A';
-    // ✅ Tambahkan tanda % untuk tampilan detail
-    const progressDisplay = report.progressReport ? `${report.progressReport}%` : 'N/A';
+    const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : 'N/A';
 
     swal({
         title: "Report Details",

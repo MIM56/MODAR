@@ -1,5 +1,5 @@
 ﻿// ========================================
-// EMPLOYEE PROJECTS - FULLY OPTIMIZED (MATCH MANAGER)
+// EMPLOYEE PROJECTS - FULLY FIXED & OPTIMIZED
 // ========================================
 
 const API_BASE = "https://localhost:7261/api";
@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
     loadData();
     initCreateButton();
     initSearchFilter();
+    initActionButtons();
+    initExportButtons();
+    initSignOutConfirmation();
 });
 
 function initCreateButton() {
@@ -47,6 +50,103 @@ function initSearchFilter() {
     if (filterSelect) {
         filterSelect.addEventListener('change', renderProjectsTable);
     }
+}
+
+// ===== INIT ACTION BUTTONS (VIEW, EDIT, DELETE) =====
+function initActionButtons() {
+    // Use event delegation for dynamic elements
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('.btn-action');
+        if (!target) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const projectId = target.getAttribute('data-id');
+        
+        if (!projectId) {
+            console.error("❌ Project ID not found!");
+            swal("Error", "Project ID is missing!", "error");
+            return;
+        }
+
+        if (target.classList.contains('btn-view')) {
+            viewProject(projectId);
+        } else if (target.classList.contains('btn-edit')) {
+            editProject(projectId);
+        } else if (target.classList.contains('btn-delete')) {
+            deleteProject(projectId);
+        }
+    });
+}
+
+// ===== INIT EXPORT BUTTONS =====
+function initExportButtons() {
+    const btnExcel = document.querySelector('.btn-export[data-export="excel"]');
+    const btnPDF = document.querySelector('.btn-export[data-export="pdf"]');
+    const btnCSV = document.querySelector('.btn-export[data-export="csv"]');
+
+    if (btnExcel) {
+        btnExcel.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToExcel();
+        });
+    }
+
+    if (btnPDF) {
+        btnPDF.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToPDF();
+        });
+    }
+
+    if (btnCSV) {
+        btnCSV.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToCSV();
+        });
+    }
+}
+
+// ===== SIGN OUT CONFIRMATION =====
+function initSignOutConfirmation() {
+    const signOutButtons = document.querySelectorAll('.btn-sign-out-mobile, .btn-sign-out');
+    
+    signOutButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const logoutUrl = this.getAttribute('href');
+            
+            swal({
+                title: "Are you sure?",
+                text: "You will be logged out of the system!",
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        text: "Cancel",
+                        value: null,
+                        visible: true,
+                        className: "swal-cancel-btn",
+                        closeModal: true
+                    },
+                    confirm: {
+                        text: "Yes, sign out!",
+                        value: true,
+                        visible: true,
+                        className: "swal-danger-btn",
+                        closeModal: true
+                    }
+                },
+                dangerMode: true,
+            }).then((willLogout) => {
+                if (willLogout) {
+                    window.location.href = logoutUrl;
+                }
+            });
+        });
+    });
 }
 
 async function loadData() {
@@ -202,13 +302,108 @@ function renderProjectsTable() {
                 <td>${description}</td>
                 <td>
                     <div class="action-buttons">
-                        <button type="button" class="btn-action btn-view" title="View"><i class="fas fa-eye"></i></button>
-                        <button type="button" class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button type="button" class="btn-action btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button type="button" class="btn-action btn-view" data-id="${projectId}" title="View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button type="button" class="btn-action btn-edit" data-id="${projectId}" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn-action btn-delete" data-id="${projectId}" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </td>
             </tr>`;
     }).join('');
+}
+
+// ========================================
+// EXPORT FUNCTIONS
+// ========================================
+function exportToExcel() {
+    if (projectsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+
+    let csv = 'No,Title,Start Date,End Date,Status,Manager,Description\n';
+    projectsData.forEach((project, index) => {
+        const statusText = project.status === 1 ? 'On Progress' : (project.status === 2 ? 'Done' : 'Pending');
+        const startDate = project.startDate ? new Date(project.startDate).toLocaleDateString('en-GB') : '-';
+        const endDate = project.endDate ? new Date(project.endDate).toLocaleDateString('en-GB') : '-';
+        const managerName = getManagerName(project.managerId);
+        csv += `${index + 1},"${project.name || project.title}","${startDate}","${endDate}","${statusText}","${managerName}","${project.description || ''}"\n`;
+    });
+
+    downloadFile(csv, 'projects.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    swal("Success", "Data exported to Excel!", "success");
+}
+
+function exportToPDF() {
+    if (projectsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+
+    const printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>Projects Report</title>');
+    printWindow.document.write('<style>body{font-family:Arial,sans-serif;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}th{background-color:#4f46e5;color:white;}</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<h1 style="color:#4f46e5;">Projects Report</h1>');
+    printWindow.document.write('<table><tr><th>No</th><th>Title</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Manager</th></tr>');
+    
+    projectsData.forEach((project, index) => {
+        const statusText = project.status === 1 ? 'On Progress' : (project.status === 2 ? 'Done' : 'Pending');
+        const startDate = project.startDate ? new Date(project.startDate).toLocaleDateString('en-GB') : '-';
+        const endDate = project.endDate ? new Date(project.endDate).toLocaleDateString('en-GB') : '-';
+        const managerName = getManagerName(project.managerId);
+        
+        printWindow.document.write(`<tr>
+            <td>${index + 1}</td>
+            <td>${project.name || project.title}</td>
+            <td>${startDate}</td>
+            <td>${endDate}</td>
+            <td>${statusText}</td>
+            <td>${managerName}</td>
+        </tr>`);
+    });
+    
+    printWindow.document.write('</table></body></html>');
+    printWindow.document.close();
+    printWindow.print();
+    
+    swal("Success", "PDF export initiated!", "success");
+}
+
+function exportToCSV() {
+    if (projectsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+
+    let csv = 'No,Title,Start Date,End Date,Status,Manager,Description\n';
+    projectsData.forEach((project, index) => {
+        const statusText = project.status === 1 ? 'On Progress' : (project.status === 2 ? 'Done' : 'Pending');
+        const startDate = project.startDate ? new Date(project.startDate).toLocaleDateString('en-GB') : '-';
+        const endDate = project.endDate ? new Date(project.endDate).toLocaleDateString('en-GB') : '-';
+        const managerName = getManagerName(project.managerId);
+        csv += `${index + 1},"${project.name || project.title}","${startDate}","${endDate}","${statusText}","${managerName}","${project.description || ''}"\n`;
+    });
+
+    downloadFile(csv, 'projects.csv', 'text/csv');
+    swal("Success", "Data exported to CSV!", "success");
+}
+
+function downloadFile(content, filename, contentType) {
+    const blob = new Blob([content], { type: contentType });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
 }
 
 // ========================================
@@ -224,25 +419,21 @@ async function submitCreateProject() {
 
     console.log("📝 Creating project:", { title, startDate, endDate, managerId, status });
 
-    // ✅ VALIDASI 1: Field wajib
     if (!title || !description || !startDate || !endDate || !managerId || !status) {
         swal("Validation Error", "Please fill in all required fields", "warning");
         return;
     }
 
-    // ✅ VALIDASI 2: Panjang Title (3 - 50 karakter)
     if (title.length < 3 || title.length > 50) {
         swal("Validation Error", `Project title must be between 3 and 50 characters. (Current: ${title.length})`, "warning");
         return;
     }
 
-    // ✅ VALIDASI 3: Panjang Description (10 - 255 karakter)
     if (description.length < 10 || description.length > 255) {
         swal("Validation Error", `Description must be between 10 and 255 characters. (Current: ${description.length})`, "warning");
         return;
     }
 
-    // ✅ VALIDASI 4: End Date tidak boleh sebelum Start Date
     if (new Date(endDate) < new Date(startDate)) {
         swal("Validation Error", "End date cannot be before start date", "warning");
         return;
@@ -286,6 +477,11 @@ async function submitCreateProject() {
 function editProject(id) {
     console.log("✏️ Editing project with ID:", id);
 
+    if (!id) {
+        swal("Error", "Project ID is missing!", "error");
+        return;
+    }
+
     const project = projectsData.find(p => String(p.id) === String(id));
     if (!project) {
         swal("Error", "Project not found", "error");
@@ -302,7 +498,6 @@ function editProject(id) {
     document.getElementById('editManager').value = project.managerId || '';
     document.getElementById('editStatus').value = project.status !== undefined ? String(project.status) : '0';
 
-    // Setup counters for edit modal
     setTimeout(() => {
         setupCounter('editTitle', 'editTitleCounter', 50);
         setupCounter('editDescription', 'editDescriptionCounter', 255);
@@ -325,27 +520,23 @@ async function submitEditProject() {
     const managerId = managerSelect ? managerSelect.value : '';
     const status = document.getElementById('editStatus').value;
 
-    console.log(" Updating project:", { id, title, startDate, endDate, managerId, status });
+    console.log("️ Updating project:", { id, title, startDate, endDate, managerId, status });
 
-    // ✅ VALIDASI 1: Field wajib
     if (!title || !description || !startDate || !endDate || !managerId || !status) {
         swal("Validation Error", "Please fill in all required fields", "warning");
         return;
     }
 
-    // ✅ VALIDASI 2: Panjang Title (3 - 50 karakter)
     if (title.length < 3 || title.length > 50) {
         swal("Validation Error", `Project title must be between 3 and 50 characters. (Current: ${title.length})`, "warning");
         return;
     }
 
-    // ✅ VALIDASI 3: Panjang Description (10 - 255 karakter)
     if (description.length < 10 || description.length > 255) {
         swal("Validation Error", `Description must be between 10 and 255 characters. (Current: ${description.length})`, "warning");
         return;
     }
 
-    // ✅ VALIDASI 4: End Date tidak boleh sebelum Start Date
     if (new Date(endDate) < new Date(startDate)) {
         swal("Validation Error", "End date cannot be before start date", "warning");
         return;
@@ -392,8 +583,16 @@ async function submitEditProject() {
 // DELETE PROJECT
 // ========================================
 async function deleteProject(id) {
+    if (!id) {
+        swal("Error", "Project ID is missing!", "error");
+        return;
+    }
+
     const project = projectsData.find(p => String(p.id) === String(id));
-    if (!project) return;
+    if (!project) {
+        swal("Error", "Project not found", "error");
+        return;
+    }
 
     swal({
         title: "Are you sure?",
@@ -427,6 +626,11 @@ async function deleteProject(id) {
 // VIEW PROJECT
 // ========================================
 function viewProject(id) {
+    if (!id) {
+        swal("Error", "Project ID is missing!", "error");
+        return;
+    }
+
     const project = projectsData.find(p => String(p.id) === String(id));
     if (!project) {
         swal("Error", "Project not found", "error");

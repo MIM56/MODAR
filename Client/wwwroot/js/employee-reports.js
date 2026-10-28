@@ -1,5 +1,5 @@
 ﻿// ========================================
-// EMPLOYEE REPORTS - FULLY OPTIMIZED (MATCH MANAGER)
+// EMPLOYEE REPORTS - FULLY FIXED & OPTIMIZED
 // ========================================
 
 const API_BASE = "https://localhost:7261/api";
@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
     loadData();
     initCreateButton();
     initSearchFilter();
+    initActionButtons();
+    initExportButtons();
+    initSignOutConfirmation();
 });
 
 function initCreateButton() {
@@ -49,6 +52,103 @@ function initSearchFilter() {
     }
 }
 
+// ===== INIT ACTION BUTTONS (VIEW, EDIT, DELETE) =====
+function initActionButtons() {
+    // Use event delegation for dynamic elements
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('.btn-action');
+        if (!target) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const reportId = target.getAttribute('data-id');
+        
+        if (!reportId) {
+            console.error("❌ Report ID not found!");
+            swal("Error", "Report ID is missing!", "error");
+            return;
+        }
+
+        if (target.classList.contains('btn-view')) {
+            viewReport(reportId);
+        } else if (target.classList.contains('btn-edit')) {
+            editReport(reportId);
+        } else if (target.classList.contains('btn-delete')) {
+            deleteReport(reportId);
+        }
+    });
+}
+
+// ===== INIT EXPORT BUTTONS =====
+function initExportButtons() {
+    const btnExcel = document.querySelector('.btn-export[data-export="excel"]');
+    const btnPDF = document.querySelector('.btn-export[data-export="pdf"]');
+    const btnCSV = document.querySelector('.btn-export[data-export="csv"]');
+
+    if (btnExcel) {
+        btnExcel.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToExcel();
+        });
+    }
+
+    if (btnPDF) {
+        btnPDF.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToPDF();
+        });
+    }
+
+    if (btnCSV) {
+        btnCSV.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportToCSV();
+        });
+    }
+}
+
+// ===== SIGN OUT CONFIRMATION =====
+function initSignOutConfirmation() {
+    const signOutButtons = document.querySelectorAll('.btn-sign-out-mobile, .btn-sign-out');
+    
+    signOutButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const logoutUrl = this.getAttribute('href');
+            
+            swal({
+                title: "Are you sure?",
+                text: "You will be logged out of the system!",
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        text: "Cancel",
+                        value: null,
+                        visible: true,
+                        className: "swal-cancel-btn",
+                        closeModal: true
+                    },
+                    confirm: {
+                        text: "Yes, sign out!",
+                        value: true,
+                        visible: true,
+                        className: "swal-danger-btn",
+                        closeModal: true
+                    }
+                },
+                dangerMode: true,
+            }).then((willLogout) => {
+                if (willLogout) {
+                    window.location.href = logoutUrl;
+                }
+            });
+        });
+    });
+}
+
 async function loadData() {
     await loadProjects();
     await loadReports();
@@ -76,7 +176,7 @@ async function loadReports() {
             updateStats();
         }
     } catch (error) {
-        console.error("❌ Error loading reports:", error);
+        console.error(" Error loading reports:", error);
     }
 }
 
@@ -180,9 +280,7 @@ function renderReportsTable() {
         const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
         const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
         const doneByName = report.doneByName || 'N/A';
-
-        // ✅ Tampilkan progress dengan tanda %
-        const progressDisplay = report.progressReport ? `${report.progressReport}%` : '-';
+        const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : '-';
 
         return `
             <tr>
@@ -195,13 +293,13 @@ function renderReportsTable() {
                 <td>${doneByName}</td>
                 <td>
                     <div class="action-buttons">
-                        <button class="btn-action btn-view" onclick="viewReport(${reportId})" title="View">
+                        <button type="button" class="btn-action btn-view" data-id="${reportId}" title="View">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button class="btn-action btn-edit" onclick="editReport(${reportId})" title="Edit">
+                        <button type="button" class="btn-action btn-edit" data-id="${reportId}" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn-action btn-delete" onclick="deleteReport(${reportId})" title="Delete">
+                        <button type="button" class="btn-action btn-delete" data-id="${reportId}" title="Delete">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -211,30 +309,122 @@ function renderReportsTable() {
 }
 
 // ========================================
+// EXPORT FUNCTIONS
+// ========================================
+function exportToExcel() {
+    if (reportsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+
+    let csv = 'No,Title,Project,Date,Progress,Status,Done By,Description\n';
+    reportsData.forEach((report, index) => {
+        const statusText = report.status === 1 ? 'On Progress' : (report.status === 2 ? 'Done' : 'Pending');
+        const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
+        const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
+        const doneByName = report.doneByName || 'N/A';
+        const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : '-';
+        
+        csv += `${index + 1},"${report.title}","${projectName}","${dateStr}","${progressDisplay}","${statusText}","${doneByName}","${report.description || ''}"\n`;
+    });
+
+    downloadFile(csv, 'reports.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    swal("Success", "Data exported to Excel!", "success");
+}
+
+function exportToPDF() {
+    if (reportsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+
+    const printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>Reports Report</title>');
+    printWindow.document.write('<style>body{font-family:Arial,sans-serif;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}th{background-color:#4f46e5;color:white;}</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<h1 style="color:#4f46e5;">Reports Report</h1>');
+    printWindow.document.write('<table><tr><th>No</th><th>Title</th><th>Project</th><th>Date</th><th>Progress</th><th>Status</th><th>Done By</th></tr>');
+    
+    reportsData.forEach((report, index) => {
+        const statusText = report.status === 1 ? 'On Progress' : (report.status === 2 ? 'Done' : 'Pending');
+        const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
+        const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
+        const doneByName = report.doneByName || 'N/A';
+        const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : '-';
+        
+        printWindow.document.write(`<tr>
+            <td>${index + 1}</td>
+            <td>${report.title}</td>
+            <td>${projectName}</td>
+            <td>${dateStr}</td>
+            <td>${progressDisplay}</td>
+            <td>${statusText}</td>
+            <td>${doneByName}</td>
+        </tr>`);
+    });
+    
+    printWindow.document.write('</table></body></html>');
+    printWindow.document.close();
+    printWindow.print();
+    
+    swal("Success", "PDF export initiated!", "success");
+}
+
+function exportToCSV() {
+    if (reportsData.length === 0) {
+        swal("Error", "No data to export!", "error");
+        return;
+    }
+
+    let csv = 'No,Title,Project,Date,Progress,Status,Done By,Description\n';
+    reportsData.forEach((report, index) => {
+        const statusText = report.status === 1 ? 'On Progress' : (report.status === 2 ? 'Done' : 'Pending');
+        const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
+        const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
+        const doneByName = report.doneByName || 'N/A';
+        const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : '-';
+        
+        csv += `${index + 1},"${report.title}","${projectName}","${dateStr}","${progressDisplay}","${statusText}","${doneByName}","${report.description || ''}"\n`;
+    });
+
+    downloadFile(csv, 'reports.csv', 'text/csv');
+    swal("Success", "Data exported to CSV!", "success");
+}
+
+function downloadFile(content, filename, contentType) {
+    const blob = new Blob([content], { type: contentType });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+// ========================================
 // CREATE REPORT (WITH VALIDATION)
 // ========================================
 async function submitCreateReport() {
     const title = document.getElementById('createTitle').value.trim();
     const description = document.getElementById('createDescription').value.trim();
     const date = document.getElementById('createDate').value;
-    const progressReportStr = document.getElementById('createProgressReport').value; // ✅ Dari dropdown
+    const progressReportStr = document.getElementById('createProgressReport').value;
     const projectId = document.getElementById('createProjectId').value;
     const status = document.getElementById('createStatus').value;
     const doneBy = 1; // TODO: Get from logged-in user
 
-    // ✅ VALIDASI 1: Field wajib
     if (!title || !description || !date || !progressReportStr || !projectId || !status) {
         swal("Validation Error", "Please fill in all required fields", "warning");
         return;
     }
 
-    // ✅ VALIDASI 2: Panjang Title (3 - 100 karakter)
     if (title.length < 3 || title.length > 100) {
         swal("Validation Error", `Report title must be between 3 and 100 characters. (Current: ${title.length})`, "warning");
         return;
     }
 
-    // ✅ VALIDASI 3: Panjang Description (10 - 500 karakter)
     if (description.length < 10 || description.length > 500) {
         swal("Validation Error", `Description must be between 10 and 500 characters. (Current: ${description.length})`, "warning");
         return;
@@ -244,7 +434,7 @@ async function submitCreateReport() {
         title: title,
         description: description,
         date: date,
-        progressReport: parseInt(progressReportStr), // ✅ Kirim sebagai int
+        progressReport: parseInt(progressReportStr),
         projectId: projectId,
         status: parseInt(status),
         doneBy: doneBy
@@ -278,6 +468,11 @@ async function submitCreateReport() {
 function editReport(id) {
     console.log("✏️ Editing report:", id);
 
+    if (!id) {
+        swal("Error", "Report ID is missing!", "error");
+        return;
+    }
+
     const report = reportsData.find(r => String(r.id) === String(id));
     if (!report) {
         swal("Error", "Report not found", "error");
@@ -290,14 +485,10 @@ function editReport(id) {
     document.getElementById('editTitle').value = report.title || '';
     document.getElementById('editDescription').value = report.description || '';
     document.getElementById('editDate').value = report.date ? new Date(report.date).toISOString().split('T')[0] : '';
-
-    // ✅ Auto-select dropdown progress (nilai dari database adalah int)
     document.getElementById('editProgressReport').value = report.progressReport !== null && report.progressReport !== undefined ? String(report.progressReport) : '';
-
     document.getElementById('editProjectId').value = report.projectId || '';
     document.getElementById('editStatus').value = report.status !== undefined ? String(report.status) : '0';
 
-    // Setup counters for edit modal
     setTimeout(() => {
         setupCounter('editTitle', 'editTitleCounter', 100);
         setupCounter('editDescription', 'editDescriptionCounter', 500);
@@ -312,24 +503,21 @@ async function submitEditReport() {
     const title = document.getElementById('editTitle').value.trim();
     const description = document.getElementById('editDescription').value.trim();
     const date = document.getElementById('editDate').value;
-    const progressReportStr = document.getElementById('editProgressReport').value; // ✅ Dari dropdown
+    const progressReportStr = document.getElementById('editProgressReport').value;
     const projectId = document.getElementById('editProjectId').value;
     const status = document.getElementById('editStatus').value;
     const doneBy = 1;
 
-    // ✅ VALIDASI 1: Field wajib
     if (!title || !description || !date || !progressReportStr || !projectId || !status) {
         swal("Validation Error", "Please fill in all required fields", "warning");
         return;
     }
 
-    // ✅ VALIDASI 2: Panjang Title
     if (title.length < 3 || title.length > 100) {
         swal("Validation Error", `Report title must be between 3 and 100 characters. (Current: ${title.length})`, "warning");
         return;
     }
 
-    // ✅ VALIDASI 3: Panjang Description
     if (description.length < 10 || description.length > 500) {
         swal("Validation Error", `Description must be between 10 and 500 characters. (Current: ${description.length})`, "warning");
         return;
@@ -339,7 +527,7 @@ async function submitEditReport() {
         title: title,
         description: description,
         date: date,
-        progressReport: parseInt(progressReportStr), // ✅ Kirim sebagai int
+        progressReport: parseInt(progressReportStr),
         projectId: projectId,
         status: parseInt(status),
         doneBy: doneBy
@@ -376,37 +564,30 @@ async function submitEditReport() {
 // DELETE REPORT
 // ========================================
 async function deleteReport(id) {
+    if (!id) {
+        swal("Error", "Report ID is missing!", "error");
+        return;
+    }
+
     const report = reportsData.find(r => String(r.id) === String(id));
-    if (!report) return;
+    if (!report) {
+        swal("Error", "Report not found", "error");
+        return;
+    }
 
     swal({
         title: "Are you sure?",
         text: `Do you really want to delete "${report.title}"?`,
         icon: "warning",
         buttons: {
-            cancel: {
-                text: "Cancel",
-                value: null,
-                visible: true,
-                className: "swal-cancel-btn",
-                closeModal: true,
-            },
-            confirm: {
-                text: "Yes, delete it!",
-                value: true,
-                visible: true,
-                className: "swal-danger-btn",
-                closeModal: true
-            }
+            cancel: { text: "Cancel", value: null, visible: true, className: "swal-cancel-btn", closeModal: true },
+            confirm: { text: "Yes, delete it!", value: true, visible: true, className: "swal-danger-btn", closeModal: true }
         },
         dangerMode: true,
     }).then(async (willDelete) => {
         if (willDelete) {
             try {
-                const response = await fetch(`${API_BASE}/Reports/${id}`, {
-                    method: 'DELETE'
-                });
-
+                const response = await fetch(`${API_BASE}/Reports/${id}`, { method: 'DELETE' });
                 if (response.ok) {
                     swal("Deleted!", "Report has been deleted.", "success");
                     await loadReports();
@@ -415,7 +596,7 @@ async function deleteReport(id) {
                     swal("Error", `Failed to delete: ${errorText}`, "error");
                 }
             } catch (error) {
-                console.error("❌ Error deleting report:", error);
+                console.error(" Error deleting report:", error);
                 swal("Error", "Failed to delete report.", "error");
             }
         }
@@ -426,6 +607,11 @@ async function deleteReport(id) {
 // VIEW REPORT
 // ========================================
 function viewReport(id) {
+    if (!id) {
+        swal("Error", "Report ID is missing!", "error");
+        return;
+    }
+
     const report = reportsData.find(r => String(r.id) === String(id));
     if (!report) {
         swal("Error", "Report not found", "error");
@@ -436,7 +622,7 @@ function viewReport(id) {
     const dateStr = report.date ? new Date(report.date).toLocaleDateString('en-GB') : '-';
     const projectName = report.projectName || (report.projectId ? `Project ${report.projectId}` : 'N/A');
     const doneByName = report.doneByName || 'N/A';
-    const progressDisplay = report.progressReport ? `${report.progressReport}%` : 'N/A';
+    const progressDisplay = report.progressReport !== null && report.progressReport !== undefined ? `${report.progressReport}%` : 'N/A';
 
     swal({
         title: "Report Details",
@@ -446,48 +632,19 @@ function viewReport(id) {
             attributes: {
                 innerHTML: `
                     <div style="text-align: left; padding: 10px; color: #0f172a !important;">
-                        <div style="margin-bottom: 12px;">
-                            <strong style="color: #0f172a !important; display: inline-block; width: 100px;">Title:</strong>
-                            <span style="color: #334155 !important;">${report.title || 'N/A'}</span>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <strong style="color: #0f172a !important; display: inline-block; width: 100px;">Project:</strong>
-                            <span style="color: #334155 !important;">${projectName}</span>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <strong style="color: #0f172a !important; display: inline-block; width: 100px;">Date:</strong>
-                            <span style="color: #334155 !important;">${dateStr}</span>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <strong style="color: #0f172a !important; display: inline-block; width: 100px;">Status:</strong>
-                            <span style="color: #334155 !important;">${statusText}</span>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <strong style="color: #0f172a !important; display: inline-block; width: 100px;">Progress:</strong>
-                            <span style="color: #334155 !important;">${progressDisplay}</span>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <strong style="color: #0f172a !important; display: inline-block; width: 100px;">Done By:</strong>
-                            <span style="color: #334155 !important;">${doneByName}</span>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <strong style="color: #0f172a !important; display: inline-block; width: 100px;">Desc:</strong>
-                            <span style="color: #334155 !important;">${report.description || 'N/A'}</span>
-                        </div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Title:</strong><span>${report.title || 'N/A'}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Project:</strong><span>${projectName}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Date:</strong><span>${dateStr}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Status:</strong><span>${statusText}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Progress:</strong><span>${progressDisplay}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Done By:</strong><span>${doneByName}</span></div>
+                        <div style="margin-bottom: 12px;"><strong style="display: inline-block; width: 100px;">Desc:</strong><span>${report.description || 'N/A'}</span></div>
                     </div>
                 `,
-                style: "font-size: 14px; line-height: 1.8; color: #0f172a !important;"
+                style: "font-size: 14px; line-height: 1.8;"
             }
         },
         icon: "info",
-        buttons: {
-            confirm: {
-                text: "OK",
-                value: true,
-                visible: true,
-                className: "btn btn-primary",
-                closeModal: true
-            }
-        }
+        buttons: { confirm: { text: "OK", value: true, visible: true, className: "btn btn-primary", closeModal: true } }
     });
 }
